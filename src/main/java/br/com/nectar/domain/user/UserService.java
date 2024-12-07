@@ -1,5 +1,9 @@
 package br.com.nectar.domain.user;
 
+import br.com.nectar.domain.manager.Manager;
+import br.com.nectar.domain.manager.ManagerRepository;
+import br.com.nectar.domain.manager.ManagerService;
+import br.com.nectar.infrastructure.exceptions.FrontDisplayableException;
 import br.com.nectar.application.user.dto.UserRegistrationRequest;
 import br.com.nectar.domain.auth.Auth;
 import br.com.nectar.domain.auth.AuthService;
@@ -7,6 +11,10 @@ import br.com.nectar.domain.profile.Profile;
 import br.com.nectar.infrastructure.services.utils.DocumentValidatorUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+
+import java.util.Optional;
+import java.util.UUID;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -17,6 +25,7 @@ import org.springframework.web.server.ResponseStatusException;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final ManagerRepository managerRepository;
     private final AuthService authService;
 
     @Transactional
@@ -24,9 +33,9 @@ public class UserService {
         if (user.getProfile() != null && user.getProfile().getDocument() != null) {
             String document = user.getProfile().getDocument();
             if (document.length() == 11 && !new DocumentValidatorUtil().checkCpf(document)) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Documento é inválido!");
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Documento inválido!");
             } else if (document.length() == 14 && !new DocumentValidatorUtil().checkCnpj(document)) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Documento é inválido!");
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Documento inválido!");
             }
         }
         return userRepository.save(user);
@@ -58,5 +67,21 @@ public class UserService {
             );
         }
         
+    }
+
+
+    public User getUserOrg(UUID userId) {
+        Optional<Manager> manager = managerRepository.getByUserId(userId);
+
+        if (manager.isPresent()) {
+            return manager.get().getOrg();
+        }
+
+        return userRepository.findById(userId).orElseThrow(() ->
+            new ResponseStatusException(
+                HttpStatus.NOT_FOUND,
+                "Este usuário não existe!"
+            )
+        );
     }
 }
