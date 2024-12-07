@@ -1,4 +1,4 @@
-package br.com.nectar.config.security;
+package br.com.nectar.infrastructure.config.security;
 
 
 import org.springframework.context.annotation.Bean;
