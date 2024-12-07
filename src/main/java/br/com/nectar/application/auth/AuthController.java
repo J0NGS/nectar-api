@@ -33,10 +33,10 @@ public class AuthController {
     public ResponseEntity<ResponseDTO<String>> login(@RequestBody AuthRequestDTO authRequest) {        
         try {
             Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword())
+                    new UsernamePasswordAuthenticationToken(authRequest.username(), authRequest.password())
             );
 
-            ResponseDTO<String> token = new ResponseDTO<>(jwtUtil.generateToken(authRequest.getUsername()));
+            ResponseDTO<String> token = new ResponseDTO<>(jwtUtil.generateToken(authRequest.username()));
             return new ResponseEntity<>(token, HttpStatus.ACCEPTED);
         } catch (AuthenticationException e) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Credenciais inválidas");

@@ -2,6 +2,7 @@ package br.com.nectar.domain.auth;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -11,9 +12,11 @@ import java.util.UUID;
 public class AuthService {
 
     private final AuthRepository authRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public AuthService(AuthRepository authRepository) {
+    public AuthService(AuthRepository authRepository, PasswordEncoder passwordEncoder) {
         this.authRepository = authRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public ResponseEntity<Auth> createAuth(String username, String rawPassword) {
@@ -23,7 +26,7 @@ public class AuthService {
 
         Auth auth = new Auth();
         auth.setUsername(username);
-        auth.setPassword(rawPassword);
+        auth.setPassword(passwordEncoder.encode(rawPassword)); // Codifica corretamente a senha
 
         Auth savedAuth = authRepository.save(auth);
         if (savedAuth != null) {
