@@ -3,6 +3,7 @@ package br.com.nectar.application.beekepeer;
 import br.com.nectar.application.auth.dto.ResponseDTO;
 import br.com.nectar.application.beekepeer.dto.CreateBeekeeperDTO;
 import br.com.nectar.domain.beekeeper.BeekeeperService;
+import br.com.nectar.domain.user.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -19,19 +20,22 @@ public class BeekeeperController {
 
     @PostMapping
     public ResponseEntity<?> create (
-        @AuthenticationPrincipal Authentication authentication,
+        @AuthenticationPrincipal CustomUserDetails userAuthentication,
         @RequestBody CreateBeekeeperDTO request
     ) throws Exception {
         return ResponseEntity.ok(
             new ResponseDTO(
-                beekeeperService.create(request)
+                beekeeperService.create(
+                    request,
+                    userAuthentication.getUser()
+                )
             )
         );
     }
 
     @GetMapping("/{beekeeperId}")
     public ResponseEntity<?> create (
-        @AuthenticationPrincipal Authentication authentication,
+        @AuthenticationPrincipal CustomUserDetails userAuthentication,
         @PathVariable("beekeeperId") UUID beekeeperId
     ) throws Exception {
         return ResponseEntity.ok(
