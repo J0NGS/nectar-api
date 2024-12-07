@@ -12,5 +12,11 @@ public class CreateBeekeeperDTO {
     private String document;
     private String phone;
     private LocalDate birthDate;
-    private Address address = null;
+
+    private String street = null;
+    private String number = null;
+    private String cep = null;
+    private String province = null;
+    private String city = null;
+    private String state = null;
 }
