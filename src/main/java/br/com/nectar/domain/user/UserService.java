@@ -38,6 +38,17 @@ public class UserService {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Documento inválido!");
             }
         }
+        try {
+            // Auth service já faz a verificação do username
+            Auth auth = authService.createAuth(user.getAuth().getUsername(), user.getAuth().getPassword()).getBody();
+            user.setAuth(auth);
+        } catch (ResponseStatusException e) {
+            throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                "Erro ao criar autenticação: " + e.getReason()
+            );
+        }
+
         return userRepository.save(user);
     }
 
@@ -45,25 +56,23 @@ public class UserService {
     public ResponseEntity<String> create(UserRegistrationRequest user) {
         User newUser = new User();
         try {
-            // Auth service já faz a verificação do username
-            Auth auth = authService.createAuth(user.getUsername(), user.getPassword()).getBody();
-            newUser.setAuth(auth);
-            
             Profile profile = new Profile();
             profile.setName(user.getName());
             profile.setDocument(user.getDocument());
             profile.setPhone(user.getPhone());
             profile.setBirthDate(user.getBirthDate());
-
-            newUser.setAuth(auth);
             newUser.setProfile(profile);
             
+            Auth authRequest = new Auth();
+            authRequest.setUsername(user.getUsername());
+            authRequest.setPassword(user.getPassword());
+            newUser.setAuth(authRequest);
             save(newUser);
             return new ResponseEntity<>("Usuário registrado !", HttpStatus.OK); 
         } catch (ResponseStatusException e) {
             throw new ResponseStatusException(
                 HttpStatus.BAD_REQUEST,
-                "Desculpe, erro ao cadastrar credenciais!"
+                "Desculpe, erro ao cadastrar usuário!"
             );
         }
         
