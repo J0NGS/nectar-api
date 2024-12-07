@@ -4,6 +4,7 @@ import br.com.nectar.application.auth.dto.ResponseDTO;
 import br.com.nectar.application.beekepeer.dto.CreateBeekeeperDTO;
 import br.com.nectar.application.beekepeer.dto.GetPageDTO;
 import br.com.nectar.domain.beekeeper.BeekeeperService;
+import br.com.nectar.domain.job.JobService;
 import br.com.nectar.domain.user.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class BeekeeperController {
     private final BeekeeperService beekeeperService;
+    private final JobService jobService;
 
     @PostMapping
     public ResponseEntity<?> create (
