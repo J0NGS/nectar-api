@@ -2,6 +2,7 @@ package br.com.nectar.domain.job;
 
 import br.com.nectar.application.beekepeer.dto.CreateBeekeeperDTO;
 import br.com.nectar.application.beekepeer.dto.GetPageDTO;
+import br.com.nectar.application.dashboard.dto.GetDashJobPageDTO;
 import br.com.nectar.application.job.dto.CreateJobDTO;
 import br.com.nectar.application.job.dto.GetJobPageDTO;
 import br.com.nectar.application.job.dto.JobsStatusFilter;
@@ -123,26 +124,40 @@ public class JobService {
             default -> List.of(JobsStatus.values());
         };
 
-        Page<Job> resource = getPageDTO.getMoth() == null
-            ? jobRepository.getPageByStatus(
-                org.getId(),
-                status,
-                PageRequest.of(
-                    page,
-                    getPageDTO.getPageSize() > 0 ? getPageDTO.getPageSize() : 10
-                )
-            ) : jobRepository.getPageByStatusAndDate(
-                getPageDTO.getMoth().atStartOfDay(),
-                getPageDTO.getMoth().atTime(23, 59, 59),
-                org.getId(),
-                status,
-                PageRequest.of(
-                    page,
-                    getPageDTO.getPageSize() > 0 ? getPageDTO.getPageSize() : 10
-                )
-            );
+        return jobRepository.getPageByStatus(
+            org.getId(),
+            status,
+            PageRequest.of(
+                page,
+                getPageDTO.getPageSize() > 0 ? getPageDTO.getPageSize() : 10
+            )
+        );
+    }
 
-        return resource;
+    public Page<Job> getPageForDash (
+        User user,
+        Integer page,
+        GetDashJobPageDTO getPageDTO
+    ) {
+        User org = userService.getUserOrg(user.getId());
+
+        List<JobsStatus> status = switch (getPageDTO.getStatus()) {
+            case IN_PROGRESS -> List.of(JobsStatus.IN_PROGRESS);
+            case CANCELED -> List.of(JobsStatus.CANCELED);
+            case CONCLUDED-> List.of(JobsStatus.CONCLUDED);
+            default -> List.of(JobsStatus.values());
+        };
+
+        return jobRepository.getPageByStatusAndDate(
+            getPageDTO.getMoth().atStartOfDay(),
+            getPageDTO.getMoth().atTime(23, 59, 59),
+            org.getId(),
+            status,
+            PageRequest.of(
+                page,
+                getPageDTO.getPageSize() > 0 ? getPageDTO.getPageSize() : 10
+            )
+        );
     }
 
     public Page<Job> getPageByBeekeeperId (
