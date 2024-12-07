@@ -24,7 +24,7 @@ public class User implements Serializable {
     private UUID id = UUID.randomUUID();
 
     @Enumerated(EnumType.STRING)
-    private Status status = Status.ACTIVE;
+    private UserStatus status = UserStatus.ACTIVE;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "auth_id", referencedColumnName = "id")
@@ -49,9 +49,4 @@ public class User implements Serializable {
 
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime createdAt = LocalDateTime.now();
-
-    enum Status {
-        ACTIVE,
-        INACTIVE
-    }
 }

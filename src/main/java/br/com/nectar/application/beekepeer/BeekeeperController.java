@@ -34,7 +34,7 @@ public class BeekeeperController {
     }
 
     @GetMapping("/{beekeeperId}")
-    public ResponseEntity<?> create (
+    public ResponseEntity<?> getById (
         @AuthenticationPrincipal CustomUserDetails userAuthentication,
         @PathVariable("beekeeperId") UUID beekeeperId
     ) throws Exception {
