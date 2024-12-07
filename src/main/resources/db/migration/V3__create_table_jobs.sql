@@ -17,8 +17,8 @@ CREATE TABLE IF NOT EXISTS jobs (
     product_type VARCHAR(50),
     status VARCHAR(50),
     beekeeper_id UUID,
-    user_id UUID,
+    owner_id UUID,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (beekeeper_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (user_id) REFERENCES users(id)
+    FOREIGN KEY (beekeeper_id) REFERENCES beekeepers(id) ON DELETE CASCADE,
+    FOREIGN KEY (owner_id) REFERENCES users(id)
 );

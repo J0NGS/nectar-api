@@ -1,7 +1,9 @@
 package br.com.nectar.domain.job;
 
+import br.com.nectar.domain.beekeeper.Beekeeper;
 import br.com.nectar.domain.user.User;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -41,10 +43,13 @@ public class Job {
     private JobsStatus status = JobsStatus.IN_PROGRESS;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private User beekeeper;
+    @JoinColumn(name = "beekeeper_id", referencedColumnName = "id")
+    private Beekeeper beekeeper;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    private User user;
+    @JsonIgnore
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "owner_id", referencedColumnName = "id")
+    private User owner;
 
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime createdAt = LocalDateTime.now();
