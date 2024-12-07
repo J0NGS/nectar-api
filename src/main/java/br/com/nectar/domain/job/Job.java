@@ -11,7 +11,9 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Entity(name = "jobs")
+
+@Entity
+@Table(name = "jobs")
 @Setter
 @Getter
 public class Job {
