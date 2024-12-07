@@ -8,12 +8,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface ManagerRepository extends JpaRepository<Manager, UUID> {
 
     @Query("SELECT m FROM Manager m WHERE m.user.id = :userId")
-    Manager getByUserId (
+    Optional<Manager> getByUserId (
         @Param("userId") UUID userId
     );
 

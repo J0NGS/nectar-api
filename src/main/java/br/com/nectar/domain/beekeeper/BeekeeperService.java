@@ -5,6 +5,7 @@ import br.com.nectar.application.beekepeer.dto.GetPageDTO;
 import br.com.nectar.domain.address.Address;
 import br.com.nectar.domain.profile.Profile;
 import br.com.nectar.domain.user.User;
+import br.com.nectar.domain.user.UserService;
 import br.com.nectar.domain.user.UserStatus;
 import br.com.nectar.infrastructure.exceptions.FrontDisplayableException;
 import lombok.RequiredArgsConstructor;
@@ -20,13 +21,20 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class BeekeeperService {
     private final BeekeeperRepository beekeeperRepository;
+    private final UserService userService;
 
-    public Beekeeper create (CreateBeekeeperDTO createBeekeeper, User user) {
+    public Beekeeper create (
+        CreateBeekeeperDTO createBeekeeper,
+        User user
+    ) {
+        User org = userService.getUserOrg(user.getId());
+
         Beekeeper beekeeper = new Beekeeper();
         Profile profile = new Profile();
 
         beekeeper.setEmail(createBeekeeper.getEmail());
         beekeeper.setOwner(user);
+        beekeeper.setOrg(org);
 
         profile.setName(createBeekeeper.getName());
         profile.setDocument(createBeekeeper.getDocument());
@@ -97,10 +105,12 @@ public class BeekeeperService {
     }
 
     public Page<Beekeeper> getPage (
-        User org,
+        User user,
         Integer page,
         GetPageDTO getPageDTO
     ) {
+        User org = userService.getUserOrg(user.getId());
+
         return beekeeperRepository.getPageByStatus(
             org.getId(),
             UserStatus.ACTIVE,
@@ -111,9 +121,11 @@ public class BeekeeperService {
         );
     }
 
-    public List<Beekeeper> getAllActiveByOrg (
-        User org
+    public List<Beekeeper> getAllActiveByUser (
+        User user
     ) {
+        User org = userService.getUserOrg(user.getId());
+
         return beekeeperRepository.getAllByStatus(
             org.getId(),
             UserStatus.ACTIVE

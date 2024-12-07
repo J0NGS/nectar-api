@@ -1,5 +1,9 @@
 package br.com.nectar.domain.user;
 
+import br.com.nectar.domain.manager.Manager;
+import br.com.nectar.domain.manager.ManagerRepository;
+import br.com.nectar.domain.manager.ManagerService;
+import br.com.nectar.infrastructure.exceptions.FrontDisplayableException;
 import br.com.nectar.infrastructure.services.utils.DocumentValidatorUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -13,14 +17,15 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final ManagerRepository managerRepository;
 
     public User save(User user) {
         if (user.getProfile() != null && user.getProfile().getDocument() != null) {
             String document = user.getProfile().getDocument();
             if (document.length() == 11 && !new DocumentValidatorUtil().checkCpf(document)) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "document is invalid!");
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Documento inválido!");
             } else if (document.length() == 14 && !new DocumentValidatorUtil().checkCnpj(document)) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "document is invalid!");
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Documento inválido!");
             }
         }
         return userRepository.save(user);
@@ -44,5 +49,20 @@ public class UserService {
 
     public Optional<User> getByUsername(String username) {
         return userRepository.getByUsername(username);
+    }
+
+    public User getUserOrg(UUID userId) {
+        Optional<Manager> manager = managerRepository.getByUserId(userId);
+
+        if (manager.isPresent()) {
+            return manager.get().getOrg();
+        }
+
+        return userRepository.findById(userId).orElseThrow(() ->
+            new ResponseStatusException(
+                HttpStatus.NOT_FOUND,
+                "Este usuário não existe!"
+            )
+        );
     }
 }

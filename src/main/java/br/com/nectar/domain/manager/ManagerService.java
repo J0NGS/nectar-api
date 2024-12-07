@@ -1,5 +1,6 @@
 package br.com.nectar.domain.manager;
 
+import br.com.nectar.domain.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -7,4 +8,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ManagerService {
     private final ManagerRepository managerRepository;
+    private final UserService userService;
+
+
 }
