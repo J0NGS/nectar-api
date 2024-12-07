@@ -12,7 +12,6 @@ import org.springframework.web.server.ResponseStatusException;
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
-    @Autowired
     private final UserRepository userRepository;
 
     public CustomUserDetailsService(UserRepository userRepository) {
