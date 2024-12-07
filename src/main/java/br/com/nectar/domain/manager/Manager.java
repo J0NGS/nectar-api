@@ -1,6 +1,7 @@
 package br.com.nectar.domain.manager;
 
 import br.com.nectar.domain.user.User;
+import br.com.nectar.domain.user.UserStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
