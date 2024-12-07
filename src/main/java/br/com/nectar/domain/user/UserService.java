@@ -2,13 +2,10 @@ package br.com.nectar.domain.user;
 
 import br.com.nectar.infrastructure.services.utils.DocumentValidatorUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -16,8 +13,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
-    private final ResourceBundleMessageSource messageSource;
-    private final Locale locale = LocaleContextHolder.getLocale();
 
     public User save(User user) {
         if (user.getProfile() != null && user.getProfile().getDocument() != null) {
@@ -35,11 +30,12 @@ public class UserService {
         // Business logic
         if (userRepository.getByUsername(user.getAuth().getUsername()) != null) {
             throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    messageSource.getMessage("user.already.exists", null, locale)
+                HttpStatus.BAD_REQUEST,
+                "Desculpe, já existe um usuário com este email cadastrado!"
             );
         }
-        return userRepository.save(user);
+
+        return save(user);
     }
 
     public Optional<User> getById(UUID uuid) {

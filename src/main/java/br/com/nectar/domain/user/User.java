@@ -22,6 +22,9 @@ public class User {
     @Id
     private UUID id = UUID.randomUUID();
 
+    @Enumerated(EnumType.STRING)
+    private Status status = Status.ACTIVE;
+
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "auth_id", referencedColumnName = "id")
     private Auth auth;
@@ -45,4 +48,9 @@ public class User {
 
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    enum Status {
+        ACTIVE,
+        INACTIVE
+    }
 }
