@@ -19,6 +19,8 @@ import br.com.nectar.domain.user.CustomUserDetailsService;
 public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
+
+    
     public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
