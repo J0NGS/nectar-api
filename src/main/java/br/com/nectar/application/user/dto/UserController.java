@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.nectar.domain.user.UserService;
 
 @RestController
-@RequestMapping("nectar/api/user")
+@RequestMapping("nectar/api/users")
 public class UserController {
 
     private final UserService userService;
@@ -23,9 +23,6 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody UserRegistrationRequest user) {
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        String encodedPassword = passwordEncoder.encode(user.getPassword());
-        user.setPassword(encodedPassword);
         return userService.create(user);
     }
 }

@@ -5,9 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Data
-@AllArgsConstructor
 public class UserRegistrationRequest
 {   
     String username; 
@@ -16,6 +16,6 @@ public class UserRegistrationRequest
     String document;
     String phone;
     LocalDate birthDate;    
-    String role;
+    UUID role;
 }
 

@@ -30,6 +30,8 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers("nectar/api/auth/**").permitAll()
+                .requestMatchers("nectar/api/users/**").permitAll()
+                .requestMatchers("nectar/api/roles/**").permitAll()
                 .anyRequest().authenticated())
             .sessionManagement(sessionManagement -> sessionManagement
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS));

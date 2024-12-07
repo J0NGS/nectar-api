@@ -8,6 +8,8 @@ import br.com.nectar.application.user.dto.UserRegistrationRequest;
 import br.com.nectar.domain.auth.Auth;
 import br.com.nectar.domain.auth.AuthService;
 import br.com.nectar.domain.profile.Profile;
+import br.com.nectar.domain.role.Role;
+import br.com.nectar.domain.role.RoleRepository;
 import br.com.nectar.infrastructure.services.utils.DocumentValidatorUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +29,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final ManagerRepository managerRepository;
     private final AuthService authService;
+    private final RoleRepository roleRepository;
 
     @Transactional
     public User save(User user) {
@@ -67,6 +70,10 @@ public class UserService {
             authRequest.setUsername(user.getUsername());
             authRequest.setPassword(user.getPassword());
             newUser.setAuth(authRequest);
+
+            
+            Role role  = roleRepository.findById(user.getRole()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Role não encontrada!"));
+            newUser.setRole(role);
             save(newUser);
             return new ResponseEntity<>("Usuário registrado !", HttpStatus.OK); 
         } catch (ResponseStatusException e) {

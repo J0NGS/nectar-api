@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -21,17 +20,17 @@ public class AddressService {
 
     public Address create(Address address) {
         if (isDuplicateAddress(address)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Address already exists");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Endereço já existe!");
         }
         return addressRepository.save(address);
     }
 
     public Address update(UUID id, Address addressDetails) {
         Address existingAddress = addressRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Address not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Endereço não econtrado!"));
 
         if (isDuplicateAddress(addressDetails) && !existingAddress.equals(addressDetails)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Address with the same details already exists");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Endereço já existe!");
         }
 
         existingAddress.setStreet(addressDetails.getStreet());
@@ -50,12 +49,12 @@ public class AddressService {
 
     public Address getById(UUID id) {
         return addressRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Address not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Endereço não encontrado"));
     }
 
     public void delete(UUID id) {
         if (!addressRepository.existsById(id)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Address not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Endereço não encontrado");
         }
         addressRepository.deleteById(id);
     }

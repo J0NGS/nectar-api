@@ -8,23 +8,25 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import br.com.nectar.domain.role.RoleRepository;
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;
-
-    public CustomUserDetailsService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    private final RoleRepository roleRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) {
         Optional<User> user = userRepository.findByAuthUsername(username);
-            
+
         if (user.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado");
         }
 
-        return new CustomUserDetails(user.get());
+        return new CustomUserDetails(user.get(), roleRepository);
     }
 }
+
