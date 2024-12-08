@@ -1,3 +1,3 @@
-package br.com.nectar.application.auth.dto;
+package br.com.nectar.application.user.dto;
 
 public record AuthRequestDTO(String username, String password) { }

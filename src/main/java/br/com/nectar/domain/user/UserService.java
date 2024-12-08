@@ -56,35 +56,26 @@ public class UserService {
     }
 
     @Transactional
-    public ResponseEntity<String> create(UserRegistrationRequest user) {
+    public User create(UserRegistrationRequest user) {
         User newUser = new User();
-        try {
-            Profile profile = new Profile();
-            profile.setName(user.getName());
-            profile.setDocument(user.getDocument());
-            profile.setPhone(user.getPhone());
-            profile.setBirthDate(user.getBirthDate());
-            newUser.setProfile(profile);
-            
-            Auth authRequest = new Auth();
-            authRequest.setUsername(user.getUsername());
-            authRequest.setPassword(user.getPassword());
-            newUser.setAuth(authRequest);
 
-            
-            Role role  = roleRepository.findById(user.getRole()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Role não encontrada!"));
-            newUser.setRole(role);
-            save(newUser);
-            return new ResponseEntity<>("Usuário registrado !", HttpStatus.OK); 
-        } catch (ResponseStatusException e) {
-            throw new ResponseStatusException(
-                HttpStatus.BAD_REQUEST,
-                "Desculpe, erro ao cadastrar usuário!"
-            );
-        }
-        
+        Profile profile = new Profile();
+        profile.setName(user.getName());
+        profile.setDocument(user.getDocument());
+        profile.setPhone(user.getPhone());
+        profile.setBirthDate(user.getBirthDate());
+        newUser.setProfile(profile);
+
+        Auth authRequest = new Auth();
+        authRequest.setUsername(user.getUsername());
+        authRequest.setPassword(user.getPassword());
+        newUser.setAuth(authRequest);
+
+        Role role  = roleRepository.findByName(user.getRole()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Role não encontrada!"));
+        newUser.setRole(role);
+
+        return save(newUser);
     }
-
 
     public User getUserOrg(UUID userId) {
         Optional<Manager> manager = managerRepository.getByUserId(userId);

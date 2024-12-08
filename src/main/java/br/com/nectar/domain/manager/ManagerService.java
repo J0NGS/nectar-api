@@ -2,6 +2,7 @@ package br.com.nectar.domain.manager;
 
 import br.com.nectar.application.beekepeer.dto.GetPageDTO;
 import br.com.nectar.application.manager.dto.CreateManagerDTO;
+import br.com.nectar.application.user.dto.UserRegistrationRequest;
 import br.com.nectar.domain.address.Address;
 import br.com.nectar.domain.auth.Auth;
 import br.com.nectar.domain.profile.Profile;
@@ -31,15 +32,18 @@ public class ManagerService {
     ) {
         User org = userService.getUserOrg(user.getId());
 
-        Auth auth = new Auth();
-        auth.setUsername(createForm.getEmail());
-        auth.setPassword(createForm.getPassword());
+        var request = new UserRegistrationRequest();
+        request.setName(createForm.getName());
+        request.setDocument(createForm.getDocument());
+        request.setPhone(createForm.getPhone());
+        request.setBirthDate(createForm.getBirthDate());
+        request.setUsername(createForm.getEmail());
+        request.setPassword(createForm.getPassword());
+        request.setRole("ROLE_MANAGER");
 
-        Profile profile = new Profile();
-        profile.setName(createForm.getName());
-        profile.setDocument(createForm.getDocument());
-        profile.setPhone(createForm.getPhone());
-        profile.setBirthDate(createForm.getBirthDate());
+        var userManager = userService.create(request);
+
+        var profile = userManager.getProfile();
 
         if(createForm.getAddress() != null) {
             Address address = new Address();
@@ -54,8 +58,6 @@ public class ManagerService {
             profile.setAddress(address);
         }
 
-        User userManager = new User();
-        userManager.setAuth(auth);
         userManager.setProfile(profile);
 
         Manager manager = new Manager();

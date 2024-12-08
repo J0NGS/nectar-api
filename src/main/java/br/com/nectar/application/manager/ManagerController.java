@@ -1,12 +1,10 @@
 package br.com.nectar.application.manager;
 
-import br.com.nectar.application.auth.dto.ResponseDTO;
-import br.com.nectar.application.beekepeer.dto.CreateBeekeeperDTO;
+import br.com.nectar.application.user.dto.ResponseDTO;
 import br.com.nectar.application.beekepeer.dto.GetPageDTO;
 import br.com.nectar.application.manager.dto.CreateManagerDTO;
 import br.com.nectar.domain.manager.ManagerService;
 import br.com.nectar.domain.user.CustomUserDetails;
-import br.com.nectar.domain.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
