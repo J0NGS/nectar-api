@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,5 +24,18 @@ public interface BeekeeperRepository extends JpaRepository<Beekeeper, UUID> {
     List<Beekeeper> getAllByStatus(
         @Param("userOrgId") UUID userOrgId,
         @Param("status")UserStatus status
+    );
+
+    @Query("""
+        SELECT COUNT(bkp.id) FROM Beekeeper bkp
+        WHERE bkp.org.id = :userOrgId
+        AND bkp.createdAt >= :begin AND bkp.createdAt <= :end
+        AND bkp.status = :status
+    """)
+    Long getQtdNewInMonth(
+        @Param("userOrgId") UUID userOrgId,
+        @Param("begin") LocalDateTime begin,
+        @Param("end") LocalDateTime end,
+        @Param("status") UserStatus status
     );
 }

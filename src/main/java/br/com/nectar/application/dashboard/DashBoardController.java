@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+
 @RestController
 @RequestMapping("/api/dashboard")
 @RequiredArgsConstructor
@@ -27,6 +29,36 @@ public class DashBoardController {
                     userAuthentication.getUser(),
                     page,
                     request
+                )
+            )
+        );
+    }
+
+    @GetMapping("/monthly/graph")
+    public ResponseEntity<?> monthlyGraph (
+        @AuthenticationPrincipal CustomUserDetails userAuthentication,
+        @RequestParam("month") String month
+    ) {
+        return ResponseEntity.ok(
+            new ResponseDTO(
+                jobService.getMonthlyGraph(
+                    userAuthentication.getUser(),
+                        LocalDate.parse(month)
+                )
+            )
+        );
+    }
+
+    @GetMapping("/monthly/board")
+    public ResponseEntity<?> monthlyBoard (
+            @AuthenticationPrincipal CustomUserDetails userAuthentication,
+            @RequestParam("month") String month
+    ) {
+        return ResponseEntity.ok(
+            new ResponseDTO(
+                jobService.getMonthlyBoard(
+                    userAuthentication.getUser(),
+                    LocalDate.parse(month)
                 )
             )
         );

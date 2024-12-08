@@ -34,6 +34,7 @@ public class Job {
     private Integer postProcessingBales; // Quantidade de fardos pós-processamento
     private Integer postProcessingWeight; // Peso total pós-processamento
     private Integer postProcessingRevenue; // Arrecadado
+    private Integer waste; // Peso desperdiçado
     private Integer wasteRate; // Taxa de desperdício
 
     private String observation;

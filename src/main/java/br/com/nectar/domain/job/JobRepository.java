@@ -27,6 +27,19 @@ public interface JobRepository extends JpaRepository<Job, UUID> {
         AND j.status IN :statuslist
         AND j.createdAt >= :begin AND j.createdAt <= :end
     """)
+    List<Job> getAllByStatus(
+        @Param("begin") LocalDateTime begin,
+        @Param("end") LocalDateTime end,
+        @Param("userOrgId") UUID userOrgId,
+        @Param("statuslist") List<JobsStatus> status
+    );
+
+    @Query("""
+        SELECT j FROM Job j
+        where j.org.id = :userOrgId
+        AND j.status IN :statuslist
+        AND j.createdAt >= :begin AND j.createdAt <= :end
+    """)
     Page<Job> getPageByStatusAndDate(
         @Param("begin") LocalDateTime begin,
         @Param("end") LocalDateTime end,

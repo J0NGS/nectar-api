@@ -14,6 +14,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 import java.util.UUID;
 
@@ -128,6 +130,23 @@ public class BeekeeperService {
 
         return beekeeperRepository.getAllByStatus(
             org.getId(),
+            UserStatus.ACTIVE
+        );
+    }
+
+    public Long getQtdNewInMonth (
+        User user,
+        LocalDate month
+    ) {
+        User org = userService.getUserOrg(user.getId());
+
+        var init = month.with(TemporalAdjusters.firstDayOfMonth());
+        var end = month.with(TemporalAdjusters.lastDayOfMonth()).plusDays(1);
+
+        return beekeeperRepository.getQtdNewInMonth(
+            org.getId(),
+            init.atStartOfDay(),
+            end.atTime(23, 59, 59),
             UserStatus.ACTIVE
         );
     }

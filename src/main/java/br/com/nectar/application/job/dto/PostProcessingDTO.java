@@ -7,5 +7,5 @@ public class PostProcessingDTO {
     private Integer postProcessingBales; // Quantidade de fardos pós-processamento
     private Integer postProcessingWeight; // Peso total pós-processamento
     private Integer postProcessingRevenue; // Arrecadado
-    private Integer wasteRate; // Taxa de desperdício
+    private Integer waste; // Peso desperdiçado
 }
