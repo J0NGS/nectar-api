@@ -4,6 +4,7 @@ import br.com.nectar.domain.job.JobsStatus;
 import br.com.nectar.domain.job.ProductType;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Data
@@ -21,6 +22,7 @@ public class CreateJobDTO {
     private Integer weight; // Peso total
     private UUID beekeeperId;
     private ProductType productType = ProductType.WAX;
+    private LocalDate startAt;
 
     private PostProcessingDTO postProcessing = null;
 

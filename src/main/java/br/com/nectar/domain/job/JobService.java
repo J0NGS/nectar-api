@@ -54,6 +54,7 @@ public class JobService {
         job.setAppearance(createJobDTO.getAppearance());
         job.setScent(createJobDTO.getScent());
         job.setColor(createJobDTO.getColor());
+        job.setStartAt(createJobDTO.getStartAt());
 
         job.setPesticides(createJobDTO.getPesticides());
         job.setHiveLoss(createJobDTO.getHiveLoss());
@@ -102,6 +103,7 @@ public class JobService {
         job.setAppearance(createJobDTO.getAppearance());
         job.setScent(createJobDTO.getScent());
         job.setColor(createJobDTO.getColor());
+        job.setStartAt(createJobDTO.getStartAt());
 
         job.setPesticides(createJobDTO.getPesticides());
         job.setHiveLoss(createJobDTO.getHiveLoss());

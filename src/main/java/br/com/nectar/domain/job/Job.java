@@ -8,6 +8,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -36,6 +37,9 @@ public class Job {
     private Integer postProcessingRevenue; // Arrecadado
     private Integer waste; // Peso desperdiçado
     private Integer wasteRate; // Taxa de desperdício
+
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate startAt; // Início
 
     private String observation;
 
