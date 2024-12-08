@@ -35,9 +35,8 @@ public class WebConfig {
             .csrf(csrf -> csrf.disable())
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers(ROLES + "**").hasRole("ORG")
-                .requestMatchers(USERS + "login").permitAll()
-                .requestMatchers(USERS + "register").hasRole("ORG")
+                .requestMatchers(ROLES + "**").permitAll()
+                .requestMatchers(USERS + "**").permitAll()
                 .anyRequest().authenticated())
             .sessionManagement(sessionManagement -> sessionManagement
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
