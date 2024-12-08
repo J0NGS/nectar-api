@@ -13,6 +13,6 @@ public class MonthlyGraphData {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate date;
     private Long startedServices = 0L; // Serviços que começaram no dia
-    private Long MediaWasteOfServices = 0L; // Média de desperdicio dos serviços
-    private Long MediaRevenueOfServices = 0L; // Média de arrecadado dos serviços
+    private Long mediaWasteOfServices = 0L; // Média de desperdicio dos serviços
+    private Long mediaRevenueOfServices = 0L; // Média de arrecadado dos serviços
 }
