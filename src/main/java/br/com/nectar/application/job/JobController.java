@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/jobs")
+@RequestMapping("/nectar/api/jobs")
 @RequiredArgsConstructor
 public class JobController {
     private final JobService jobService;

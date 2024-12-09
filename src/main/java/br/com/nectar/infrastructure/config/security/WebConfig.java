@@ -16,8 +16,12 @@ import java.util.List;
 @Configuration
 public class WebConfig {
     // Rotas padrão
-    public static final String USERS = "nectar/api/users/";
-    public static final String ROLES = "nectar/api/roles/";
+    public static final String USERS = "/nectar/api/users/";
+    public static final String ROLES = "/nectar/api/roles/";
+    public static final String MANAGERS = "/nectar/api/managers/";
+    public static final String JOBS = "/nectar/api/jobs/";
+    public static final String DASHBOARD = "/nectar/api/dashboard/";
+    public static final String BEEKEPEERS = "/nectar/api/beekepeers/";
 
     // Roles
     public static final String ORG = "ORG";
@@ -37,6 +41,11 @@ public class WebConfig {
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers(ROLES + "**").permitAll()
                 .requestMatchers(USERS + "**").permitAll()
+                .requestMatchers(MANAGERS + "**").permitAll()
+                .requestMatchers(JOBS + "**").permitAll()
+                .requestMatchers(DASHBOARD + "**").permitAll()
+                .requestMatchers(BEEKEPEERS + "**").permitAll()
+
                 .anyRequest().authenticated())
             .sessionManagement(sessionManagement -> sessionManagement
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS));

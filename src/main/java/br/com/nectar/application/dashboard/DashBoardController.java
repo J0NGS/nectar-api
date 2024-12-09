@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 
 @RestController
-@RequestMapping("/api/dashboard")
+@RequestMapping("/nectar/api/dashboard")
 @RequiredArgsConstructor
 public class DashBoardController {
     private final JobService jobService;

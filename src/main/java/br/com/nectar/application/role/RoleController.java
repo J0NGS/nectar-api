@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("nectar/api/roles")
+@RequestMapping("/nectar/api/roles")
 public class RoleController {
 
     private final RoleService roleService;

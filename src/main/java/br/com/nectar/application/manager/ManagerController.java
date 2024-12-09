@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/managers")
+@RequestMapping("/nectar/api/managers")
 @RequiredArgsConstructor
 public class ManagerController {
     private final ManagerService managerService;

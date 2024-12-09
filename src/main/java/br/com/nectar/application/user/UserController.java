@@ -20,7 +20,7 @@ import br.com.nectar.domain.user.UserService;
 import org.springframework.web.server.ResponseStatusException;
 
 @RestController
-@RequestMapping("nectar/api/users")
+@RequestMapping("/nectar/api/users")
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
