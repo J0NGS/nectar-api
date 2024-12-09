@@ -36,16 +36,17 @@ public class WebConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+            .exceptionHandling().disable()
             .csrf(csrf -> csrf.disable())
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(authorize -> authorize
+                .requestMatchers("/error").anonymous()
                 .requestMatchers(ROLES + "**").permitAll()
-                .requestMatchers(USERS + "**").permitAll()
+                .requestMatchers(USERS + "**").hasRole("ORG")
                 .requestMatchers(MANAGERS + "**").permitAll()
                 .requestMatchers(JOBS + "**").permitAll()
                 .requestMatchers(DASHBOARD + "**").permitAll()
                 .requestMatchers(BEEKEPEERS + "**").permitAll()
-
                 .anyRequest().authenticated())
             .sessionManagement(sessionManagement -> sessionManagement
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
