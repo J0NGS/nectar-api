@@ -34,7 +34,7 @@ public class User implements Serializable {
     @JoinColumn(name = "profile_id", referencedColumnName = "id")
     private Profile profile;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id", referencedColumnName = "id")
     private Role role;
 

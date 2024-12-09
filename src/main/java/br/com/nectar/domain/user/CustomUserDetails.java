@@ -14,27 +14,32 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class CustomUserDetails implements UserDetails {
 
     private final User user;
-    private final RoleRepository roleRepository;
+    
+    private List<String> mapRoleHierarchy(Role role) {
+        if ("ROLE_ORG".equals(role.getName())) {
+            return List.of("ROLE_ORG", "ROLE_MANAGER");
+        } else if ("ROLE_MANAGER".equals(role.getName())) {
+            return List.of("ROLE_MANAGER");
+        } else {
+            return List.of(role.getName());
+        }
+    }
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // Obter todas as roles usando RoleService
-        Page<Role> rolesPage = roleRepository.findAll(Pageable.unpaged());
-    
-        if (rolesPage == null || rolesPage.isEmpty()) {
-            return Collections.emptyList(); // Retorna vazio se não houver roles
+        if ("ROLE_ORG".equals(this.user.getRole().getName())) {
+            return List.of(new SimpleGrantedAuthority("ROLE_ORG"), new SimpleGrantedAuthority("ROLE_MANAGER"));
+        } else {
+            return List.of(new SimpleGrantedAuthority("ROLE_MANAGER"));
         }
-    
-        // Mapear as roles para GrantedAuthority
-        return rolesPage.stream()
-                .map(role -> new SimpleGrantedAuthority(role.getName()))
-                .collect(Collectors.toList());
     }
     
     public User getUser() {

@@ -1,4 +1,5 @@
 package br.com.nectar.infrastructure.config.security;
+import org.antlr.v4.runtime.atn.SemanticContext.OR;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -46,16 +47,16 @@ public class WebConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers("/error").anonymous()
-                .requestMatchers(ROLES + "**").permitAll()
-                .requestMatchers(USERS + "**").hasRole("ORG")
-                .requestMatchers(MANAGERS + "**").permitAll()
-                .requestMatchers(JOBS + "**").permitAll()
-                .requestMatchers(DASHBOARD + "**").permitAll()
-                .requestMatchers(BEEKEPEERS + "**").permitAll()
+                .requestMatchers(USERS + "login").permitAll()
+                .requestMatchers(USERS + "**").hasRole(ORG)
+                .requestMatchers(BEEKEPEERS + "**").hasRole(MANAGER)
+                .requestMatchers(ROLES + "**").hasRole(ORG)
+                .requestMatchers(DASHBOARD + "**").hasRole(MANAGER)
+                .requestMatchers(JOBS + "**").hasRole(MANAGER)
+                .requestMatchers(MANAGERS + "**").hasRole(ORG)
                 .anyRequest().authenticated())
             .sessionManagement(sessionManagement -> sessionManagement
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }

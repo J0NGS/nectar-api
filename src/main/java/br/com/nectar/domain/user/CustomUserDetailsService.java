@@ -16,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) {
@@ -26,7 +25,7 @@ public class CustomUserDetailsService implements UserDetailsService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado");
         }
 
-        return new CustomUserDetails(user.get(), roleRepository);
+        return new CustomUserDetails(user.get());
     }
 }
 
