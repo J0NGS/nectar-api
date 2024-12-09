@@ -27,6 +27,11 @@ public class WebConfig {
     public static final String ORG = "ORG";
     public static final String MANAGER = "MANAGER";
 
+    // Endereços autorizados cors
+    protected static final String[] ALLOWED_ORIGINS = {
+        "http://localhost:3000",
+    };
+
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     public WebConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
@@ -58,7 +63,7 @@ public class WebConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("*")); // Permite todas as origens;
+        configuration.setAllowedOrigins(List.of(ALLOWED_ORIGINS));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         configuration.setExposedHeaders(List.of("Authorization"));
