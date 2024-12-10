@@ -18,14 +18,14 @@ public interface ManagerRepository extends JpaRepository<Manager, UUID> {
         @Param("userId") UUID userId
     );
 
-    @Query("SELECT m FROM Manager m WHERE m.org.id = :orgId AND m.user.status = :status")
+    @Query("SELECT m FROM Manager m WHERE m.org.id = :userOrgId AND m.user.status = :status")
     Page<Manager> getPageByStatus(
         @Param("userOrgId") UUID userOrgId,
         @Param("status") UserStatus status,
         Pageable pageable
     );
 
-    @Query("SELECT m FROM Manager m WHERE m.org.id = :orgId AND m.user.status = :status")
+    @Query("SELECT m FROM Manager m WHERE m.org.id = :userOrgId AND m.user.status = :status")
     List<Manager> getAllByStatus(
         @Param("userOrgId") UUID userOrgId,
         @Param("status") UserStatus status
