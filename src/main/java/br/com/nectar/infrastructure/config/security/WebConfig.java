@@ -48,6 +48,7 @@ public class WebConfig {
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers("/error").anonymous()
                 .requestMatchers(USERS + "login").permitAll()
+                .requestMatchers(USERS + "register").permitAll()
                 .requestMatchers(USERS + "**").hasRole(ORG)
                 .requestMatchers(BEEKEPEERS + "**").hasRole(MANAGER)
                 .requestMatchers(ROLES + "**").hasRole(ORG)
