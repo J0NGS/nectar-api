@@ -42,32 +42,31 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String jwt = null;
     
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            jwt = authorizationHeader.substring(7); // Remove o prefixo "Bearer "
+            jwt = authorizationHeader.substring(7); // Remove "Bearer "
             username = jwtUtil.extractUsername(jwt); // Extrai o username do token
         }
     
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             Claims claims = jwtUtil.extractAllClaims(jwt);
-        
-            // Extraindo a role do token
             String role = claims.get("ROLE", String.class);
-        
-            // Convertendo role para SimpleGrantedAuthority
-            List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(role));
-        
-            // Criando o objeto UserDetails
-            UserDetails userDetails = new org.springframework.security.core.userdetails.User(
-                    username, "", authorities);
-        
+    
+            // Certifique-se de que a role tenha o prefixo ROLE_
+            String authority = role.startsWith("ROLE_") ? role : "ROLE_" + role;
+    
+            // Configurando as autoridades
+            List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(authority));
+    
             // Configurando o contexto de autenticação
+            UserDetails userDetails = new org.springframework.security.core.userdetails.User(username, "", authorities);
             UsernamePasswordAuthenticationToken authToken =
                     new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
+    
             authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-        
             SecurityContextHolder.getContext().setAuthentication(authToken);
         }
     
         chain.doFilter(request, response); // Próximo filtro
     }
+    
 
 }

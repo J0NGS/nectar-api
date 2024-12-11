@@ -23,14 +23,25 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationManager authenticationManager(
-        HttpSecurity http,
-        CustomUserDetailsService userDetailsService
-    ) throws Exception {
+            HttpSecurity http,
+            CustomUserDetailsService userDetailsService) throws Exception {
         var authManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
         authManagerBuilder
-            .userDetailsService(userDetailsService)
-            .passwordEncoder(passwordEncoder());
+                .userDetailsService(userDetailsService)
+                .passwordEncoder(passwordEncoder());
 
         return authManagerBuilder.build();
+    }
+
+    @Bean
+    public RoleHierarchy roleHierarchy() {
+        return new CustomRoleHierarchy();
+    }
+
+    @Bean
+    public DefaultMethodSecurityExpressionHandler methodSecurityExpressionHandler(RoleHierarchy roleHierarchy) {
+        DefaultMethodSecurityExpressionHandler expressionHandler = new DefaultMethodSecurityExpressionHandler();
+        expressionHandler.setRoleHierarchy(roleHierarchy);
+        return expressionHandler;
     }
 }
