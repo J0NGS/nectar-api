@@ -30,7 +30,7 @@ public class ManagerService {
         CreateManagerDTO createForm,
         User user
     ) {
-        User org = userService.getUserOrg(user.getId());
+        User org = userService.getUserOrg(user.getId()).getBody();
 
         var request = new UserRegistrationRequest();
         request.setName(createForm.getName());
@@ -41,7 +41,7 @@ public class ManagerService {
         request.setPassword(createForm.getPassword());
         request.setRole("ROLE_MANAGER");
 
-        var userManager = userService.create(request);
+        var userManager = userService.create(request).getBody();
 
         var profile = userManager.getProfile();
 
@@ -125,7 +125,7 @@ public class ManagerService {
         Integer page,
         GetPageDTO getPageDTO
     ) {
-        User org = userService.getUserOrg(user.getId());
+        User org = userService.getUserOrg(user.getId()).getBody();
 
         return managerRepository.getPageByStatus(
             org.getId(),
@@ -140,7 +140,7 @@ public class ManagerService {
     public List<Manager> getAllActive (
         User user
     ) {
-        User org = userService.getUserOrg(user.getId());
+        User org = userService.getUserOrg(user.getId()).getBody();
 
         return managerRepository.getAllByStatus(
             org.getId(),

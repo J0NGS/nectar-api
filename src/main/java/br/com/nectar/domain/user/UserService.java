@@ -6,6 +6,7 @@ import br.com.nectar.domain.manager.ManagerService;
 import br.com.nectar.domain.privilege.Privilege;
 import br.com.nectar.domain.privilege.PrivilegeRepository;
 import br.com.nectar.infrastructure.exceptions.FrontDisplayableException;
+import br.com.nectar.application.user.dto.UserResponse;
 import br.com.nectar.application.user.dto.ResponseDTO;
 import br.com.nectar.application.user.dto.UserInfos;
 import br.com.nectar.application.user.dto.UserRegistrationRequest;
@@ -23,6 +24,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -74,7 +76,7 @@ public class UserService {
     }
 
     @Transactional
-    public User save(User user) {
+    public ResponseEntity<User> save(User user) {
         if (user.getProfile() != null && user.getProfile().getDocument() != null) {
             String document = user.getProfile().getDocument();
             if (document.length() == 11 && !new DocumentValidatorUtil().checkCpf(document)) {
@@ -92,12 +94,17 @@ public class UserService {
                     HttpStatus.BAD_REQUEST,
                     "Erro ao criar autenticação: " + e.getReason());
         }
+        Optional<User> userSaved = Optional.ofNullable(userRepository.save(user));
+        
+        if (!userSaved.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro ao salvar usuário!");
+        }
 
-        return userRepository.save(user);
+        return new ResponseEntity<>(userSaved.get(), HttpStatus.CREATED);
     }
 
     @Transactional
-    public User create(UserRegistrationRequest user) {
+    public ResponseEntity<User> create(UserRegistrationRequest user) {
         User newUser = new User();
 
         Profile profile = new Profile();
@@ -119,20 +126,21 @@ public class UserService {
         return save(newUser);
     }
 
-    public User getUserOrg(UUID userId) {
+    public ResponseEntity<User> getUserOrg(UUID userId) {
         Optional<Manager> manager = managerRepository.getByUserId(userId);
 
         if (manager.isPresent()) {
-            return manager.get().getOrg();
+            return new ResponseEntity<>(manager.get().getOrg(), HttpStatus.OK);
         }
 
-        return userRepository.findById(userId).orElseThrow(() -> new ResponseStatusException(
+        User user = userRepository.findById(userId).orElseThrow(() -> new ResponseStatusException(
                 HttpStatus.NOT_FOUND,
                 "Este usuário não existe!"));
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @Transactional
-    public User addPrivilegeToUser(UUID userId, UUID privilegeId) {
+    public ResponseEntity<UserResponse> addPrivilegeToUser(UUID userId, UUID privilegeId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado!"));
 
@@ -143,12 +151,12 @@ public class UserService {
             user.getPrivileges().add(privilege);
             userRepository.save(user);
         }
-
-        return user;
+        
+        return new ResponseEntity<> (UserResponse.fromUser(user), HttpStatus.OK);
     }
 
     @Transactional
-    public User removePrivilegeFromUser(UUID userId, UUID privilegeId) {
+    public ResponseEntity<UserResponse> removePrivilegeFromUser(UUID userId, UUID privilegeId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado!"));
 
@@ -162,11 +170,11 @@ public class UserService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Privilégio não pertence ao usuário!");
         }
 
-        return user;
+        return new ResponseEntity<> (UserResponse.fromUser(user), HttpStatus.OK);
     }
 
     @Transactional
-    public User updatePassword(UUID userId, String newPassword) {
+    public ResponseEntity<UserResponse> updatePassword(UUID userId, String newPassword) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado!"));
 
@@ -175,11 +183,11 @@ public class UserService {
         }
 
         user.getAuth().setPassword(newPassword);
-        return userRepository.save(user);
+        return new ResponseEntity<> (UserResponse.fromUser(user), HttpStatus.OK);
     }
 
     @Transactional
-    public User updateUsername(UUID userId, String newUsername) {
+    public ResponseEntity<UserResponse> updateUsername(UUID userId, String newUsername) {
         if (newUsername == null || newUsername.trim().isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "O novo nome de usuário não pode ser vazio!");
         }
@@ -192,7 +200,7 @@ public class UserService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado!"));
 
         user.getAuth().setUsername(newUsername);
-        return userRepository.save(user);
+        return new ResponseEntity<> (UserResponse.fromUser(user), HttpStatus.OK);
     }
 
 }

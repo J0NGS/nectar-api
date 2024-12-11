@@ -40,7 +40,7 @@ public class JobService {
         CreateJobDTO createJobDTO,
         User user
     ) {
-        User org = userService.getUserOrg(user.getId());
+        User org = userService.getUserOrg(user.getId()).getBody();
         Beekeeper beekeeper = beekeeperService.getById(createJobDTO.getBeekeeperId());
 
         var job = new Job();
@@ -153,7 +153,7 @@ public class JobService {
         Integer page,
         GetJobPageDTO getPageDTO
     ) {
-        User org = userService.getUserOrg(user.getId());
+        User org = userService.getUserOrg(user.getId()).getBody();
 
         List<JobsStatus> status = switch (getPageDTO.getStatus()) {
             case IN_PROGRESS -> List.of(JobsStatus.IN_PROGRESS);
@@ -177,7 +177,7 @@ public class JobService {
         Integer page,
         GetDashJobPageDTO getPageDTO
     ) {
-        User org = userService.getUserOrg(user.getId());
+        User org = userService.getUserOrg(user.getId()).getBody();
 
         List<JobsStatus> status = switch (getPageDTO.getStatus()) {
             case IN_PROGRESS -> List.of(JobsStatus.IN_PROGRESS);
@@ -205,7 +205,7 @@ public class JobService {
         GetJobPageDTO getPageDTO
     ) {
         Beekeeper beekeeper = beekeeperService.getById(beekeeperId);
-        User org = userService.getUserOrg(user.getId());
+        User org = userService.getUserOrg(user.getId()).getBody();
 
         List<JobsStatus> status = switch (getPageDTO.getStatus()) {
             case IN_PROGRESS -> List.of(JobsStatus.IN_PROGRESS);
@@ -231,7 +231,7 @@ public class JobService {
     ) {
         var graphData = new MonthlyGraphDTO();
 
-        var org = userService.getUserOrg(user.getId());
+        var org = userService.getUserOrg(user.getId()).getBody();
 
         var init = month.with(TemporalAdjusters.firstDayOfMonth());
         var end = month.with(TemporalAdjusters.lastDayOfMonth()).plusDays(1);
@@ -277,7 +277,7 @@ public class JobService {
     ) {
         var board = new MonthlyBoardDTO();
 
-        var org = userService.getUserOrg(user.getId());
+        var org = userService.getUserOrg(user.getId()).getBody();
 
         var init = month.with(TemporalAdjusters.firstDayOfMonth());
         var end = month.with(TemporalAdjusters.lastDayOfMonth()).plusDays(1);

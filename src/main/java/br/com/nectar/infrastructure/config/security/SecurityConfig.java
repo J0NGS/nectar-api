@@ -30,21 +30,4 @@ public class SecurityConfig {
                 .and()
                 .build();
     }
-
-    @Bean
-    public RoleHierarchy roleHierarchy() {
-        RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
-        // Configura a hierarquia de roles
-        roleHierarchy.setHierarchy("""
-            ROLE_ORG > ROLE_MANAGER
-        """);
-        return roleHierarchy;
-    }
-
-    @Bean
-    public DefaultMethodSecurityExpressionHandler methodSecurityExpressionHandler(RoleHierarchy roleHierarchy) {
-        DefaultMethodSecurityExpressionHandler expressionHandler = new DefaultMethodSecurityExpressionHandler();
-        expressionHandler.setRoleHierarchy(roleHierarchy);
-        return expressionHandler;
-    }
 }
