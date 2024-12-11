@@ -39,11 +39,27 @@ public class AuthService {
     // Atualizar a senha de um usuário
     public ResponseEntity<String> updatePassword(UUID authId, String rawPassword) {
         return authRepository.findById(authId).map(auth -> {
+            auth.setPassword(passwordEncoder.encode(rawPassword)); // Codifica corretamente a senha
             Auth updatedAuth = authRepository.save(auth);
             if (updatedAuth != null){
                 return ResponseEntity.ok("Senha atualizada.");}
             else{
                 throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro na atualização da senha!");}
+        }).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Credenciais não encontradas!"));
+    }
+
+    // Atualizar o nome de usuário
+    public ResponseEntity<String> updateUsername(UUID authId, String newUsername) {
+        return authRepository.findById(authId).map(auth -> {
+            if (authRepository.existsByUsername(newUsername)) {
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "Conflito, usuário já existe!");
+            }
+            auth.setUsername(newUsername);
+            Auth updatedAuth = authRepository.save(auth);
+            if (updatedAuth != null){
+                return ResponseEntity.ok("Nome de usuário atualizado.");}
+            else{
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro na atualização do nome de usuário!");}
         }).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Credenciais não encontradas!"));
     }
 

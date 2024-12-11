@@ -1,6 +1,6 @@
 package br.com.nectar.application.job;
 
-import br.com.nectar.application.user.dto.ResponseDTO;
+import br.com.nectar.application.ResponseDTO;
 import br.com.nectar.application.job.dto.CreateJobDTO;
 import br.com.nectar.application.job.dto.GetJobPageDTO;
 import br.com.nectar.domain.job.JobService;

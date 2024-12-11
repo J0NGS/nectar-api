@@ -29,7 +29,7 @@ public class BeekeeperService {
         CreateBeekeeperDTO createBeekeeper,
         User user
     ) {
-        User org = userService.getUserOrg(user.getId()).getBody();
+        User org = userService.getUserOrg(user.getId());
 
         Beekeeper beekeeper = new Beekeeper();
         Profile profile = new Profile();
@@ -111,7 +111,7 @@ public class BeekeeperService {
         Integer page,
         GetPageDTO getPageDTO
     ) {
-        User org = userService.getUserOrg(user.getId()).getBody();
+        User org = userService.getUserOrg(user.getId());
 
         return beekeeperRepository.getPageByStatus(
             org.getId(),
@@ -126,7 +126,7 @@ public class BeekeeperService {
     public List<Beekeeper> getAllActiveByUser (
         User user
     ) {
-        User org = userService.getUserOrg(user.getId()).getBody();
+        User org = userService.getUserOrg(user.getId());
 
         return beekeeperRepository.getAllByStatus(
             org.getId(),
@@ -138,7 +138,7 @@ public class BeekeeperService {
         User user,
         LocalDate month
     ) {
-        User org = userService.getUserOrg(user.getId()).getBody();
+        User org = userService.getUserOrg(user.getId());
 
         var init = month.with(TemporalAdjusters.firstDayOfMonth());
         var end = month.with(TemporalAdjusters.lastDayOfMonth()).plusDays(1);

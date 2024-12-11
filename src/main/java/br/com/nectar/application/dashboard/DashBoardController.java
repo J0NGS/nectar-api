@@ -1,6 +1,6 @@
 package br.com.nectar.application.dashboard;
 
-import br.com.nectar.application.user.dto.ResponseDTO;
+import br.com.nectar.application.ResponseDTO;
 import br.com.nectar.application.dashboard.dto.GetDashJobPageDTO;
 import br.com.nectar.domain.job.JobService;
 import br.com.nectar.domain.user.CustomUserDetails;

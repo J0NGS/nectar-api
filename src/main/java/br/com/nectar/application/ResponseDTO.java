@@ -1,4 +1,4 @@
-package br.com.nectar.application.user.dto;
+package br.com.nectar.application;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;

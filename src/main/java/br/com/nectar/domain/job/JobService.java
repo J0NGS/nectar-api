@@ -1,21 +1,15 @@
 package br.com.nectar.domain.job;
 
-import br.com.nectar.application.beekepeer.dto.CreateBeekeeperDTO;
-import br.com.nectar.application.beekepeer.dto.GetPageDTO;
 import br.com.nectar.application.dashboard.dto.GetDashJobPageDTO;
 import br.com.nectar.application.dashboard.dto.MonthlyBoardDTO;
 import br.com.nectar.application.dashboard.dto.MonthlyGraphDTO;
 import br.com.nectar.application.dashboard.dto.MonthlyGraphData;
 import br.com.nectar.application.job.dto.CreateJobDTO;
 import br.com.nectar.application.job.dto.GetJobPageDTO;
-import br.com.nectar.application.job.dto.JobsStatusFilter;
-import br.com.nectar.domain.address.Address;
 import br.com.nectar.domain.beekeeper.Beekeeper;
 import br.com.nectar.domain.beekeeper.BeekeeperService;
-import br.com.nectar.domain.profile.Profile;
 import br.com.nectar.domain.user.User;
 import br.com.nectar.domain.user.UserService;
-import br.com.nectar.domain.user.UserStatus;
 import br.com.nectar.infrastructure.exceptions.FrontDisplayableException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -40,7 +34,7 @@ public class JobService {
         CreateJobDTO createJobDTO,
         User user
     ) {
-        User org = userService.getUserOrg(user.getId()).getBody();
+        User org = userService.getUserOrg(user.getId());
         Beekeeper beekeeper = beekeeperService.getById(createJobDTO.getBeekeeperId());
 
         var job = new Job();
@@ -153,7 +147,7 @@ public class JobService {
         Integer page,
         GetJobPageDTO getPageDTO
     ) {
-        User org = userService.getUserOrg(user.getId()).getBody();
+        User org = userService.getUserOrg(user.getId());
 
         List<JobsStatus> status = switch (getPageDTO.getStatus()) {
             case IN_PROGRESS -> List.of(JobsStatus.IN_PROGRESS);
@@ -177,7 +171,7 @@ public class JobService {
         Integer page,
         GetDashJobPageDTO getPageDTO
     ) {
-        User org = userService.getUserOrg(user.getId()).getBody();
+        User org = userService.getUserOrg(user.getId());
 
         List<JobsStatus> status = switch (getPageDTO.getStatus()) {
             case IN_PROGRESS -> List.of(JobsStatus.IN_PROGRESS);
@@ -205,7 +199,7 @@ public class JobService {
         GetJobPageDTO getPageDTO
     ) {
         Beekeeper beekeeper = beekeeperService.getById(beekeeperId);
-        User org = userService.getUserOrg(user.getId()).getBody();
+        User org = userService.getUserOrg(user.getId());
 
         List<JobsStatus> status = switch (getPageDTO.getStatus()) {
             case IN_PROGRESS -> List.of(JobsStatus.IN_PROGRESS);
@@ -231,7 +225,7 @@ public class JobService {
     ) {
         var graphData = new MonthlyGraphDTO();
 
-        var org = userService.getUserOrg(user.getId()).getBody();
+        var org = userService.getUserOrg(user.getId());
 
         var init = month.with(TemporalAdjusters.firstDayOfMonth());
         var end = month.with(TemporalAdjusters.lastDayOfMonth()).plusDays(1);
@@ -277,7 +271,7 @@ public class JobService {
     ) {
         var board = new MonthlyBoardDTO();
 
-        var org = userService.getUserOrg(user.getId()).getBody();
+        var org = userService.getUserOrg(user.getId());
 
         var init = month.with(TemporalAdjusters.firstDayOfMonth());
         var end = month.with(TemporalAdjusters.lastDayOfMonth()).plusDays(1);

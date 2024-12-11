@@ -49,6 +49,8 @@ public class WebConfig {
                 .requestMatchers("/error").anonymous()
                 .requestMatchers(USERS + "login").permitAll()
                 .requestMatchers(USERS + "register").permitAll()
+                .requestMatchers(USERS + "{userId}/update-password").permitAll()
+                .requestMatchers(USERS + "{userId}/update-username").permitAll()
                 .requestMatchers(USERS + "**").hasRole(ORG)
                 .requestMatchers(BEEKEPEERS + "**").hasRole(MANAGER)
                 .requestMatchers(ROLES + "**").hasRole(ORG)

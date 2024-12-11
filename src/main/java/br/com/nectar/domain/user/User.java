@@ -30,7 +30,7 @@ public class User implements Serializable {
     @JoinColumn(name = "auth_id", referencedColumnName = "id")
     private Auth auth;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "profile_id", referencedColumnName = "id")
     private Profile profile;
 

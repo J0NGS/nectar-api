@@ -1,7 +1,7 @@
 package br.com.nectar.application.user;
 
+import br.com.nectar.application.ResponseDTO;
 import br.com.nectar.application.user.dto.AuthRequestDTO;
-import br.com.nectar.application.user.dto.ResponseDTO;
 import br.com.nectar.application.user.dto.UserInfos;
 import br.com.nectar.application.user.dto.UserRegistrationRequest;
 import br.com.nectar.domain.token.JwtUtil;
@@ -9,12 +9,8 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.UUID;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,10 +19,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.service.annotation.DeleteExchange;
 
-import br.com.nectar.domain.user.User;
 import br.com.nectar.domain.user.UserService;
-import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/nectar/api/users")
@@ -36,41 +31,49 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthRequestDTO authRequest) {
-        return userService.login(authRequest.username(), authRequest.password());
+        ResponseDTO response = new ResponseDTO(userService.login(authRequest.username(), authRequest.password()));
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody UserRegistrationRequest user) {
-        return ResponseEntity.ok( new ResponseDTO( userService.create(user)));
+        ResponseDTO<?> response = new ResponseDTO<>(userService.create(user));
+        return ResponseEntity.ok(response);
     }
 
     @PatchMapping("/{userId}/update-password")
     public ResponseEntity<?> updatePassword(@PathVariable UUID userId, @RequestParam String newPassword) {
-        return ResponseEntity.ok(userService.updatePassword(userId, newPassword));
+        ResponseDTO<?> response = new ResponseDTO<>(userService.updatePassword(userId, newPassword));
+        return ResponseEntity.ok(response);
     }
 
     @PatchMapping("/{userId}/update-username")
     public ResponseEntity<?> updateUsername(@PathVariable UUID userId, @RequestParam String newUsername) {
-        return ResponseEntity.ok(userService.updateUsername(userId, newUsername));
+        ResponseDTO<?> response = new ResponseDTO<>(userService.updateUsername(userId, newUsername));
+        return ResponseEntity.ok(response);
     }
 
     @PatchMapping("/{userId}/privileges/{privilegeId}/add")
     public ResponseEntity<?> addPrivilegeToUser(@PathVariable UUID userId, @PathVariable UUID privilegeId) {
-        return ResponseEntity.ok(userService.addPrivilegeToUser(userId, privilegeId));
+        ResponseDTO<?> response = new ResponseDTO<>(userService.addPrivilegeToUser(userId, privilegeId));
+        return ResponseEntity.ok(response);
     }
 
     @PatchMapping("/{userId}/privileges/{privilegeId}/remove")
     public ResponseEntity<?> removePrivilegeFromUser(@PathVariable UUID userId,  @PathVariable UUID privilegeId) {
-        return ResponseEntity.ok(userService.removePrivilegeFromUser(userId, privilegeId));
+        ResponseDTO<?> response = new ResponseDTO<>(userService.removePrivilegeFromUser(userId, privilegeId));
+        return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/{userId}/org")
-    public ResponseEntity<?> getUserOrg(@PathVariable UUID userId) {
-        return ResponseEntity.ok(userService.getUserOrg(userId));
+    @GetMapping("/{userId}")
+    public ResponseEntity<?> getUserById(@PathVariable UUID userId) {
+        ResponseDTO<?> response = new ResponseDTO<>(userService.getUserById(userId));
+        return ResponseEntity.ok(response);
     }
-
-    @PostMapping
-    public ResponseEntity<?> saveUser(@RequestBody User user) {
-        return userService.save(user);
+    
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<?> deleteUser(@PathVariable UUID userId) {
+        ResponseDTO<?> response = new ResponseDTO<>(userService.deleteById(userId));
+        return ResponseEntity.ok(response);
     }
 }

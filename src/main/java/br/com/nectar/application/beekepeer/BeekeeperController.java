@@ -1,6 +1,6 @@
 package br.com.nectar.application.beekepeer;
 
-import br.com.nectar.application.user.dto.ResponseDTO;
+import br.com.nectar.application.ResponseDTO;
 import br.com.nectar.application.beekepeer.dto.CreateBeekeeperDTO;
 import br.com.nectar.application.beekepeer.dto.GetPageDTO;
 import br.com.nectar.domain.beekeeper.BeekeeperService;
