@@ -45,30 +45,13 @@ public class UserService {
     private final RoleRepository roleRepository;
 
     @Transactional
-    public ResponseEntity<UserInfos> login(String username, String password) {
+    public String login(String username, String password) {
         try {
             // Realiza autenticação
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(username, password));
 
-            // Gera o token JWT
-            String token = jwtUtil.generateToken(username);
-
-            // Busca o usuário e cria o DTO de informações
-            User user = userRepository.findByAuthUsername(username)
-                    .orElseThrow(() -> new ResponseStatusException(
-                            HttpStatus.NOT_FOUND, "Usuário não encontrado!"));
-
-            UserInfos userInfos = new UserInfos(
-                    user.getId(),
-                    user.getAuth().getUsername(),
-                    user.getProfile().getName(),
-                    user.getRole().getName(),
-                    user.getPrivileges(),
-                    token);
-
-            return ResponseEntity.ok(userInfos);
-
+            return jwtUtil.generateToken(authentication);
         } catch (AuthenticationException e) {
             throw new ResponseStatusException(
                     HttpStatus.UNAUTHORIZED, "Credenciais inválidas");

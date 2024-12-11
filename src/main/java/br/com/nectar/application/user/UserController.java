@@ -36,7 +36,11 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthRequestDTO authRequest) {
-        return userService.login(authRequest.username(), authRequest.password());
+        return ResponseEntity.ok(
+            new ResponseDTO(
+                userService.login(authRequest.username(), authRequest.password())
+            )
+        );
     }
 
     @PostMapping("/register")

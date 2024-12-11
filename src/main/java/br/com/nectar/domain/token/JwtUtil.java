@@ -1,10 +1,13 @@
 package br.com.nectar.domain.token;
+import br.com.nectar.domain.user.CustomUserDetails;
 import io.jsonwebtoken.*;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.Map;
 import java.util.function.Function;
 
 @Component
@@ -22,9 +25,27 @@ public class JwtUtil {
         return claimsResolver.apply(claims);
     }
 
-    public String generateToken(String username) {
+    public String generateToken(Authentication authentication) {
+        var userDetails = (CustomUserDetails) authentication.getPrincipal();
+
+        var user = userDetails.getUser();
+
+        var privileges = user.getPrivileges().stream()
+                .map(privilege -> privilege.getName())
+                .toArray(String[]::new);
+
         return Jwts.builder()
-                .setSubject(username) 
+                .setSubject(user.getAuth().getUsername())
+                .setClaims(
+                    Map.of(
+                        "UUID", user.getId(),
+                        "AUTHORITIES", privileges,
+                        "ROLE", user.getRole().getName(),
+                        "name", user.getProfile() == null
+                                ? "Usuário Indefinido"
+                                : user.getProfile().getName()
+                    )
+                )
                 .setIssuedAt(new Date(System.currentTimeMillis())) // Data de emissão
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // Expira em 10 horas
                 .signWith(SignatureAlgorithm.HS256, SECRET_KEY) 
