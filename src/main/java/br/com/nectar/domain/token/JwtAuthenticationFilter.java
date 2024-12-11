@@ -33,8 +33,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
-            throws ServletException, IOException {
+    protected void doFilterInternal(
+        HttpServletRequest request,
+        HttpServletResponse response,
+        FilterChain chain
+    ) throws ServletException, IOException {
     
         final String authorizationHeader = request.getHeader("Authorization");
     
@@ -57,7 +60,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(authority));
     
             // Configurando o contexto de autenticação
-            UserDetails userDetails = new org.springframework.security.core.userdetails.User(username, "", authorities);
+            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
             UsernamePasswordAuthenticationToken authToken =
                     new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
     
