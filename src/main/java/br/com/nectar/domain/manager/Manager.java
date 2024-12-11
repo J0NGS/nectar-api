@@ -18,7 +18,6 @@ public class Manager {
     @Id
     private UUID id = UUID.randomUUID();
 
-    @JsonIgnore
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
