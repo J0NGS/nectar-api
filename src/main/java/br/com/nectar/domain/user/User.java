@@ -19,7 +19,7 @@ import java.util.UUID;
 @Table(name = "users")
 @Getter
 @Setter
-public class User implements Serializable {
+public class User {
     @Id
     private UUID id = UUID.randomUUID();
 
