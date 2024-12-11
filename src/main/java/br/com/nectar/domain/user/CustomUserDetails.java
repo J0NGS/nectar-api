@@ -21,17 +21,6 @@ import java.util.stream.Collectors;
 public class CustomUserDetails implements UserDetails {
 
     private final User user;
-    
-    private List<String> mapRoleHierarchy(Role role) {
-        if ("ROLE_ORG".equals(role.getName())) {
-            return List.of("ROLE_ORG", "ROLE_MANAGER");
-        } else if ("ROLE_MANAGER".equals(role.getName())) {
-            return List.of("ROLE_MANAGER");
-        } else {
-            return List.of(role.getName());
-        }
-    }
-
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
