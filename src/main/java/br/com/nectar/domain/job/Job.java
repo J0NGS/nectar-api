@@ -53,7 +53,6 @@ public class Job {
     @JoinColumn(name = "beekeeper_id", referencedColumnName = "id")
     private Beekeeper beekeeper;
 
-    @JsonIgnore
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id", referencedColumnName = "id")
     private User owner;
