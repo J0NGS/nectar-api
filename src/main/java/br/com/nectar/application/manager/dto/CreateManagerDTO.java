@@ -8,12 +8,12 @@ import java.time.LocalDate;
 
 @Data
 public class CreateManagerDTO {
-    private UserStatus status = UserStatus.ACTIVE;
     private String name;
     private String email;
     private String document;
     private String phone;
     private String password;
-    private LocalDate birthDate;
+    private UserStatus status = null;
+    private LocalDate birthDate = null;
     private AddressDTO address = null;
 }

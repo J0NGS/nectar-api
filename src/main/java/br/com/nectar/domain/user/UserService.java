@@ -85,6 +85,9 @@ public class UserService {
     public User create(UserRegistrationRequest user) {
         User newUser = new User();
 
+        if(user.getStatus() != null)
+            newUser.setStatus(user.getStatus());
+
         Profile profile = new Profile();
         profile.setName(user.getName());
         profile.setDocument(user.getDocument());

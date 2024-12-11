@@ -39,10 +39,10 @@ public class ManagerService {
         request.setBirthDate(createForm.getBirthDate());
         request.setUsername(createForm.getEmail());
         request.setPassword(createForm.getPassword());
+        request.setStatus(createForm.getStatus());
         request.setRole("ROLE_MANAGER");
 
         var userManager = userService.create(request);
-
         var profile = userManager.getProfile();
 
         if(createForm.getAddress() != null) {
@@ -79,7 +79,9 @@ public class ManagerService {
         );
 
         User userManager = manager.getUser();
-        userManager.setStatus(createForm.getStatus());
+
+        if(createForm.getStatus() != null)
+            userManager.setStatus(createForm.getStatus());
 
         Auth auth = userManager.getAuth();
         auth.setUsername(createForm.getEmail());
