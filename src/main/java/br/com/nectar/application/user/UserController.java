@@ -2,6 +2,7 @@ package br.com.nectar.application.user;
 
 import br.com.nectar.application.user.dto.AuthRequestDTO;
 import br.com.nectar.application.user.dto.ResponseDTO;
+import br.com.nectar.application.user.dto.UserInfos;
 import br.com.nectar.application.user.dto.UserRegistrationRequest;
 import br.com.nectar.domain.token.JwtUtil;
 import lombok.RequiredArgsConstructor;
@@ -28,38 +29,15 @@ public class UserController {
     private final JwtUtil jwtUtil;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(
-        @RequestBody AuthRequestDTO authRequest
-    ) {
-        try {
-            Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                    authRequest.username(),
-                    authRequest.password()
-                )
-            );
-
-            return ResponseEntity.ok(
-                new ResponseDTO(
-                    jwtUtil.generateToken(authRequest.username())
-                )
-            );
-        } catch (AuthenticationException e) {
-            throw new ResponseStatusException(
-                HttpStatus.UNAUTHORIZED,
-                "Credenciais inválidas"
-            );
-        }
+    public ResponseEntity<UserInfos> login(@RequestBody AuthRequestDTO authRequest) {
+        return userService.login(authRequest.username(), authRequest.password());
     }
 
     @PostMapping("/register")
     public ResponseEntity<?> register(
-        @RequestBody UserRegistrationRequest user
-    ) {
+            @RequestBody UserRegistrationRequest user) {
         return ResponseEntity.ok(
-            new ResponseDTO(
-                userService.create(user)
-            )
-        );
+                new ResponseDTO(
+                        userService.create(user)));
     }
 }

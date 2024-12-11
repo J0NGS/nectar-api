@@ -67,5 +67,9 @@ public class AuthService {
         authRepository.deleteById(id);
         return ResponseEntity.noContent().build();
     }
+
+    public boolean usernameExists(String username) {
+        return authRepository.existsByUsername(username);
+    }	
 }
 

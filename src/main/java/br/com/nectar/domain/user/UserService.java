@@ -3,13 +3,18 @@ package br.com.nectar.domain.user;
 import br.com.nectar.domain.manager.Manager;
 import br.com.nectar.domain.manager.ManagerRepository;
 import br.com.nectar.domain.manager.ManagerService;
+import br.com.nectar.domain.privilege.Privilege;
+import br.com.nectar.domain.privilege.PrivilegeRepository;
 import br.com.nectar.infrastructure.exceptions.FrontDisplayableException;
+import br.com.nectar.application.user.dto.ResponseDTO;
+import br.com.nectar.application.user.dto.UserInfos;
 import br.com.nectar.application.user.dto.UserRegistrationRequest;
 import br.com.nectar.domain.auth.Auth;
 import br.com.nectar.domain.auth.AuthService;
 import br.com.nectar.domain.profile.Profile;
 import br.com.nectar.domain.role.Role;
 import br.com.nectar.domain.role.RoleRepository;
+import br.com.nectar.domain.token.JwtUtil;
 import br.com.nectar.infrastructure.services.utils.DocumentValidatorUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -19,17 +24,54 @@ import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
+    private final AuthenticationManager authenticationManager;
+    private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
+    private final PrivilegeRepository privilegeRepository;
     private final ManagerRepository managerRepository;
     private final AuthService authService;
     private final RoleRepository roleRepository;
+
+    @Transactional
+    public ResponseEntity<UserInfos> login(String username, String password) {
+        try {
+            // Realiza autenticação
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(username, password));
+
+            // Gera o token JWT
+            String token = jwtUtil.generateToken(username);
+
+            // Busca o usuário e cria o DTO de informações
+            User user = userRepository.findByAuthUsername(username)
+                    .orElseThrow(() -> new ResponseStatusException(
+                            HttpStatus.NOT_FOUND, "Usuário não encontrado!"));
+
+            UserInfos userInfos = new UserInfos(
+                    user.getId(),
+                    user.getAuth().getUsername(),
+                    user.getProfile().getName(),
+                    user.getRole().getName(),
+                    user.getPrivileges(),
+                    token);
+
+            return ResponseEntity.ok(userInfos);
+
+        } catch (AuthenticationException e) {
+            throw new ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED, "Credenciais inválidas");
+        }
+    }
 
     @Transactional
     public User save(User user) {
@@ -47,9 +89,8 @@ public class UserService {
             user.setAuth(auth);
         } catch (ResponseStatusException e) {
             throw new ResponseStatusException(
-                HttpStatus.BAD_REQUEST,
-                "Erro ao criar autenticação: " + e.getReason()
-            );
+                    HttpStatus.BAD_REQUEST,
+                    "Erro ao criar autenticação: " + e.getReason());
         }
 
         return userRepository.save(user);
@@ -71,7 +112,8 @@ public class UserService {
         authRequest.setPassword(user.getPassword());
         newUser.setAuth(authRequest);
 
-        Role role  = roleRepository.findByName(user.getRole()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Role não encontrada!"));
+        Role role = roleRepository.findByName(user.getRole())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Role não encontrada!"));
         newUser.setRole(role);
 
         return save(newUser);
@@ -84,11 +126,73 @@ public class UserService {
             return manager.get().getOrg();
         }
 
-        return userRepository.findById(userId).orElseThrow(() ->
-            new ResponseStatusException(
+        return userRepository.findById(userId).orElseThrow(() -> new ResponseStatusException(
                 HttpStatus.NOT_FOUND,
-                "Este usuário não existe!"
-            )
-        );
+                "Este usuário não existe!"));
     }
+
+    @Transactional
+    public User addPrivilegeToUser(UUID userId, UUID privilegeId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado!"));
+
+        Privilege privilege = privilegeRepository.findById(privilegeId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Privilégio não encontrado!"));
+
+        if (!user.getPrivileges().contains(privilege)) {
+            user.getPrivileges().add(privilege);
+            userRepository.save(user);
+        }
+
+        return user;
+    }
+
+    @Transactional
+    public User removePrivilegeFromUser(UUID userId, UUID privilegeId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado!"));
+
+        Privilege privilege = privilegeRepository.findById(privilegeId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Privilégio não encontrado!"));
+
+        if (user.getPrivileges().contains(privilege)) {
+            user.getPrivileges().remove(privilege);
+            userRepository.save(user);
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Privilégio não pertence ao usuário!");
+        }
+
+        return user;
+    }
+
+    @Transactional
+    public User updatePassword(UUID userId, String newPassword) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado!"));
+
+        if (newPassword == null || newPassword.trim().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "A nova senha não pode ser vazia!");
+        }
+
+        user.getAuth().setPassword(newPassword);
+        return userRepository.save(user);
+    }
+
+    @Transactional
+    public User updateUsername(UUID userId, String newUsername) {
+        if (newUsername == null || newUsername.trim().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "O novo nome de usuário não pode ser vazio!");
+        }
+
+        if (authService.usernameExists(newUsername)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "O nome de usuário já está em uso!");
+        }
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado!"));
+
+        user.getAuth().setUsername(newUsername);
+        return userRepository.save(user);
+    }
+
 }
