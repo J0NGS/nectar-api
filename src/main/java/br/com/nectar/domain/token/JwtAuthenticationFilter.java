@@ -4,6 +4,9 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,8 +15,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import br.com.nectar.domain.user.CustomUserDetailsService;
+import io.jsonwebtoken.Claims;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.List;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -29,32 +35,39 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
-
+    
         final String authorizationHeader = request.getHeader("Authorization");
-
+    
         String username = null;
         String jwt = null;
-
-        // Token no cabeçalho
+    
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            jwt = authorizationHeader.substring(7); // Removendo o prefixo Bearer
-            username = jwtUtil.extractUsername(jwt); // Extrai o nome de user do token
+            jwt = authorizationHeader.substring(7); // Remove o prefixo "Bearer "
+            username = jwtUtil.extractUsername(jwt); // Extrai o username do token
         }
-
-        // Autenticação de user
+    
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-
-            // Validação de token e contexto do user
-            if (jwtUtil.validateToken(jwt, userDetails.getUsername())) {
-                UsernamePasswordAuthenticationToken authToken =
-                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-                SecurityContextHolder.getContext().setAuthentication(authToken);
-            }
+            Claims claims = jwtUtil.extractAllClaims(jwt);
+        
+            // Extraindo a role do token
+            String role = claims.get("ROLE", String.class);
+        
+            // Convertendo role para SimpleGrantedAuthority
+            List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(role));
+        
+            // Criando o objeto UserDetails
+            UserDetails userDetails = new org.springframework.security.core.userdetails.User(
+                    username, "", authorities);
+        
+            // Configurando o contexto de autenticação
+            UsernamePasswordAuthenticationToken authToken =
+                    new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
+            authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+        
+            SecurityContextHolder.getContext().setAuthentication(authToken);
         }
-
-        chain.doFilter(request, response); // Proximo filtro
+    
+        chain.doFilter(request, response); // Próximo filtro
     }
+
 }

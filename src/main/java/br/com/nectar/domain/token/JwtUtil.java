@@ -54,14 +54,21 @@ public class JwtUtil {
 
     public boolean validateToken(String token, String username) {
         final String extractedUsername = extractUsername(token);
-        return (extractedUsername.equals(username) && !isTokenExpired(token));
+        boolean valid = extractedUsername.equals(username) && !isTokenExpired(token);
+    
+        System.out.println("Token Validation:");
+        System.out.println("Extracted Username: " + extractedUsername);
+        System.out.println("Token Valid: " + valid);
+    
+        return valid;
     }
+    
 
     private boolean isTokenExpired(String token) {
         return extractClaim(token, Claims::getExpiration).before(new Date());
     }
 
-    private Claims extractAllClaims(String token) {
+    public Claims extractAllClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(SECRET_KEY)
                 .build()
