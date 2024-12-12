@@ -13,9 +13,15 @@ import java.util.UUID;
 
 public interface BeekeeperRepository extends JpaRepository<Beekeeper, UUID> {
 
-    @Query("SELECT bkp FROM Beekeeper bkp WHERE bkp.org.id = :userOrgId AND bkp.status = :status")
+    @Query("""
+        SELECT bkp FROM Beekeeper bkp
+        WHERE bkp.org.id = :userOrgId
+        AND bkp.status = :status
+        AND (:name IS NULL OR LOWER(bkp.profile.name) LIKE %:name%)
+    """)
     Page<Beekeeper> getPageByStatus(
         @Param("userOrgId") UUID userOrgId,
+        @Param("name") String name,
         @Param("status")UserStatus status,
         Pageable pageable
     );
