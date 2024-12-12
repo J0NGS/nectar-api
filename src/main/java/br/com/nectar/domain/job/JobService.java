@@ -21,6 +21,7 @@ import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -247,14 +248,39 @@ public class JobService {
                 job -> job.getCreatedAt().toLocalDate().isEqual(finalStart)
             );
 
-            data.add(
-               new MonthlyGraphData(
-                    start,
-                    createAtDay.count(),
-                   createAtDay.mapToInt(Job::getWasteRate).sum() / createAtDay.count(),
-                   createAtDay.mapToInt(Job::getPostProcessingRevenue).sum() / createAtDay.count()
-                )
-            );
+            if(createAtDay.findAny().isPresent()) {
+                var qtd = createAtDay.findAny().isEmpty() ? 1 : createAtDay.count();
+
+                var mediaWaste = createAtDay
+                    .map(Job::getWasteRate)
+                    .filter(Objects::nonNull)
+                    .mapToInt(Integer::intValue)
+                    .sum() / qtd;
+
+                var mediaRevenue = createAtDay
+                    .map(Job::getPostProcessingRevenue)
+                    .filter(Objects::nonNull)
+                    .mapToInt(Integer::intValue)
+                    .sum() / qtd;
+
+                data.add(
+                    new MonthlyGraphData(
+                        start,
+                        qtd,
+                        mediaWaste,
+                        mediaRevenue
+                    )
+                );
+            } else {
+                data.add(
+                    new MonthlyGraphData(
+                        start,
+                        0L,
+                        0L,
+                        0L
+                    )
+                );
+            }
 
             start = start.plusDays(1);
         }

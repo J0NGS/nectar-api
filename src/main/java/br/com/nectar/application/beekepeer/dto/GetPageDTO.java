@@ -5,6 +5,7 @@ import lombok.Data;
 
 @Data
 public class GetPageDTO {
+    private String name = null;
     private Integer pageSize = 10;
     private UserStatus status = UserStatus.ACTIVE;
 }

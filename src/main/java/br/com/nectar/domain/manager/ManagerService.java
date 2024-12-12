@@ -129,9 +129,14 @@ public class ManagerService {
     ) {
         User org = userService.getUserOrg(user.getId());
 
+        var name = getPageDTO.getName() != null
+            ? getPageDTO.getName().toLowerCase()
+            : null;
+
         return managerRepository.getPageByStatus(
             org.getId(),
-            UserStatus.ACTIVE,
+            name,
+            getPageDTO.getStatus(),
             PageRequest.of(
                 page,
                 getPageDTO.getPageSize() > 0 ? getPageDTO.getPageSize() : 10

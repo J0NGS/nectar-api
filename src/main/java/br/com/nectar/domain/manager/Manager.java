@@ -18,12 +18,12 @@ public class Manager {
     @Id
     private UUID id = UUID.randomUUID();
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
     @JsonIgnore
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = "org_id", referencedColumnName = "id")
     private User org;
 

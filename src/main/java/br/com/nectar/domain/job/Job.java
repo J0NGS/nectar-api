@@ -49,16 +49,16 @@ public class Job {
     @Enumerated(EnumType.STRING)
     private JobsStatus status = JobsStatus.IN_PROGRESS;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = "beekeeper_id", referencedColumnName = "id")
     private Beekeeper beekeeper;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = "owner_id", referencedColumnName = "id")
     private User owner;
 
     @JsonIgnore
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = "org_id", referencedColumnName = "id")
     private User org;
 
