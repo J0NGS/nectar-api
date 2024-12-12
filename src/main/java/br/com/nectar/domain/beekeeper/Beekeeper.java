@@ -32,7 +32,7 @@ public class Beekeeper {
     private User owner;
 
     @JsonIgnore
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "org_id", referencedColumnName = "id")
     private User org;
 
