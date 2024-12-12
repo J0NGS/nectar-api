@@ -180,7 +180,8 @@ public class UserService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "O novo nome de usuário não pode ser vazio!");
         }
 
-        if (authService.usernameExists(newUsername)) {
+        if (authService.usernameExists(newUsername) 
+                && !userRepository.findByAuthUsername(newUsername).get().getId().equals(userId)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "O nome de usuário já está em uso!");
         }
 

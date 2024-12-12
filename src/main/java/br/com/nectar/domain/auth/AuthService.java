@@ -51,7 +51,8 @@ public class AuthService {
     // Atualizar o nome de usuário
     public ResponseEntity<String> updateUsername(UUID authId, String newUsername) {
         return authRepository.findById(authId).map(auth -> {
-            if (authRepository.existsByUsername(newUsername)) {
+            if (authRepository.existsByUsername(newUsername)
+                    && !authRepository.findByUsername(newUsername).get().getId().equals(authId)) {
                 throw new ResponseStatusException(HttpStatus.CONFLICT, "Conflito, usuário já existe!");
             }
             auth.setUsername(newUsername);

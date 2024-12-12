@@ -84,7 +84,7 @@ public class RoleService {
             );
         }
     
-        // Adiciona os privilégios válidos que ainda não estão associados à role
+        // Adiciona os privilégios válidos
         validPrivileges.forEach(privilege -> {
             if (!role.getPrivileges().contains(privilege)) {
                 role.getPrivileges().add(privilege);
@@ -104,7 +104,7 @@ public class RoleService {
         Role role = roleRepository.findById(roleId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Role não encontrada!"));
     
-        // Remover privilégios que estão associados à role
+        // Remover privilégios
         privilegeIds.forEach(privilegeId -> {
             if (roleRepository.isPrivilegeAssignedToRole(roleId, privilegeId)) {
                 roleRepository.removePrivilegeFromRole(roleId, privilegeId);

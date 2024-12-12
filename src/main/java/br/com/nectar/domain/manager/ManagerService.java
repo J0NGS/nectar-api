@@ -82,10 +82,10 @@ public class ManagerService {
 
         if(createForm.getStatus() != null)
             userManager.setStatus(createForm.getStatus());
-
-        Auth auth = userManager.getAuth();
-        auth.setUsername(createForm.getEmail());
-        auth.setPassword(createForm.getPassword());
+    
+        // update auth
+        userService.updatePassword(userManager.getId(), createForm.getPassword());
+        userService.updateUsername(userManager.getId(), createForm.getEmail());
 
         Profile profile = userManager.getProfile();
         profile.setName(createForm.getName());
@@ -108,7 +108,6 @@ public class ManagerService {
             profile.setAddress(address);
         }
 
-        userManager.setAuth(auth);
         userManager.setProfile(profile);
 
         return managerRepository.save(manager);
