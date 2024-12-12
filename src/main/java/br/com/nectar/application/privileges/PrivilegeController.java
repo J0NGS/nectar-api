@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import br.com.nectar.application.ResponseDTO;
 import br.com.nectar.domain.privilege.Privilege;
 import br.com.nectar.domain.privilege.PrivilegeService;
 
@@ -21,42 +22,45 @@ public class PrivilegeController {
     }
 
     @PostMapping
-    public ResponseEntity<Privilege> createPrivilege(@RequestParam String name) {
-        return privilegeService.createPrivilege(name);
+    public ResponseEntity<?> createPrivilege(@RequestParam String name) {
+        ResponseDTO<?> response = new ResponseDTO<>(privilegeService.createPrivilege(name));
+        return ResponseEntity.ok(response);    
     }
 
     @GetMapping
-    public ResponseEntity<Page<Privilege>> getAllPrivileges(Pageable pageable) {
-        return privilegeService.getAllPrivileges(pageable);
+    public ResponseEntity<?> getAllPrivileges(Pageable pageable) {
+        ResponseDTO<?> response = new ResponseDTO<>(privilegeService.getAllPrivileges(pageable));
+        return ResponseEntity.ok(response);    
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Privilege> getPrivilegeById(@PathVariable UUID id) {
-        return privilegeService.getPrivilegeById(id);
+    public ResponseEntity<?> getPrivilegeById(@PathVariable UUID id) {
+        ResponseDTO<?> response = new ResponseDTO<>(privilegeService.getPrivilegeById(id));
+        return ResponseEntity.ok(response);    
     }
 
     @GetMapping("/search")
-    public ResponseEntity<Privilege> getPrivilegeByName(@RequestParam String name) {
-        return privilegeService.getPrivilegeByName(name);
+    public ResponseEntity<?> getPrivilegeByName(@RequestParam String name) {
+        ResponseDTO<?> response = new ResponseDTO<>(privilegeService.getPrivilegeByName(name));
+        return ResponseEntity.ok(response);    
     }
 
     @PatchMapping("/{id}/signature-revoked")
-    public ResponseEntity<Privilege> updateIsSignatureRevoked(
-            @PathVariable UUID id,
-            @RequestParam boolean isSignatureRevoked) {
-        return privilegeService.updateIsSignatureRevoked(id, isSignatureRevoked);
+    public ResponseEntity<?> updateIsSignatureRevoked(@PathVariable UUID id, @RequestParam boolean isSignatureRevoked) {
+        ResponseDTO<?> response = new ResponseDTO<>(privilegeService.updateIsSignatureRevoked(id, isSignatureRevoked));
+        return ResponseEntity.ok(response);    
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Privilege> updatePrivilege(
-            @PathVariable UUID id,
-            @RequestParam String newName) {
-        return privilegeService.updatePrivilege(id, newName);
+    public ResponseEntity<?> updatePrivilege(@PathVariable UUID id, @RequestParam String newName) {
+        ResponseDTO<?> response = new ResponseDTO<>(privilegeService.updatePrivilege(id, newName));
+        return ResponseEntity.ok(response);    
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePrivilege(@PathVariable UUID id) {
-        return privilegeService.deletePrivilege(id);
+    public ResponseEntity<?> deletePrivilege(@PathVariable UUID id) {
+        ResponseDTO<?> response = new ResponseDTO<>(privilegeService.deletePrivilege(id));
+        return ResponseEntity.ok(response);
     }
 }
 

@@ -29,7 +29,7 @@ public class RoleService {
 
     // Criar uma Role com ou sem privilégios
     @Transactional
-    public ResponseEntity<Role> createRole(String name, List<UUID> privilegeIds) {
+    public Role createRole(String name, List<UUID> privilegeIds) {
         if (roleRepository.existsByName(name)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Role já existe com este nome!");
         }
@@ -41,53 +41,66 @@ public class RoleService {
             // Valida e busca os privilégios
             List<Privilege> privileges = privilegeIds.stream()
                     .map(privilegeService::getPrivilegeById)
-                    .map(ResponseEntity::getBody)
                     .collect(Collectors.toList());
             role.setPrivileges(privileges);
         }
 
         Role savedRole = roleRepository.save(role);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedRole);
+        return savedRole;
     }
 
-    public ResponseEntity<Page<Role>> getAllRoles(Pageable pageable) {
+    public Page<Role> getAllRoles(Pageable pageable) {
         Page<Role> roles = roleRepository.findAll(pageable);
-        return ResponseEntity.ok(roles);
+        return roles;
     }
 
-    public ResponseEntity<Role> getRoleById(UUID roleId) {
+    public Role getRoleById(UUID roleId) {
         return roleRepository.findById(roleId)
-                .map(ResponseEntity::ok)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Role não encontrada!"));
     }
 
     // Adicionar privilégios a uma Role
     @Transactional
-    public ResponseEntity<Role> addPrivilegesToRole(UUID roleId, List<UUID> privilegeIds) {
+    public Role addPrivilegesToRole(UUID roleId, List<UUID> privilegeIds) {
+        // Verifica se a role existe
         Role role = roleRepository.findById(roleId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Role não encontrada!"));
-
-        // Adicionar privilégios que ainda não estão associados
-        privilegeIds.forEach(privilegeId -> {
-            if (!roleRepository.isPrivilegeAssignedToRole(roleId, privilegeId)) {
-                roleRepository.addPrivilegeToRole(roleId, privilegeId);
+    
+        // Busca privilégios válidos do banco
+        List<Privilege> validPrivileges = privilegeService.findAllByIds(privilegeIds);
+    
+        // Verifica se todos os privilégios fornecidos existem
+        if (validPrivileges.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Nenhum dos privilégios fornecidos foi encontrado!");
+        }
+    
+        if (validPrivileges.size() != privilegeIds.size()) {
+            List<UUID> missingPrivileges = privilegeIds.stream()
+                    .filter(id -> validPrivileges.stream().noneMatch(privilege -> privilege.getId().equals(id)))
+                    .toList();
+    
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "Os seguintes privilégios não existem: " + missingPrivileges
+            );
+        }
+    
+        // Adiciona os privilégios válidos que ainda não estão associados à role
+        validPrivileges.forEach(privilege -> {
+            if (!role.getPrivileges().contains(privilege)) {
+                role.getPrivileges().add(privilege);
             }
         });
-
-
-        // Atualiza a entidade com os privilégios adicionados
-        List<Privilege> updatedPrivileges = new ArrayList<>(
-                privilegeService.getAllPrivileges(Pageable.unpaged()).getBody().stream()
-                        .filter(privilege -> privilegeIds.contains(privilege.getId())) // Filtrando os privilégios para adicionar somento os que existem
-                        .toList());
-        role.getPrivileges().addAll(updatedPrivileges); // Salvando filtragem
-
-        return ResponseEntity.ok(role);
+    
+        // Salva a role com os novos privilégios
+        Role updatedRole = roleRepository.save(role);
+    
+        return updatedRole;
     }
+    
 
     // Remover privilégios de uma Role
     @Transactional
-    public ResponseEntity<Role> removePrivilegesFromRole(UUID roleId, List<UUID> privilegeIds) {
+    public Role removePrivilegesFromRole(UUID roleId, List<UUID> privilegeIds) {
         Role role = roleRepository.findById(roleId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Role não encontrada!"));
     
@@ -105,11 +118,11 @@ public class RoleService {
     
         role.setPrivileges(updatedPrivileges);
     
-        return ResponseEntity.ok(role);
+        return role;
     }
 
     @Transactional
-    public ResponseEntity<Role> updateRoleName(UUID roleId, String newName) {
+    public Role updateRoleName(UUID roleId, String newName) {
         Role role = roleRepository.findById(roleId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Role não encontrada!"));
 
@@ -120,15 +133,15 @@ public class RoleService {
         role.setName(newName);
         Role updatedRole = roleRepository.save(role);
 
-        return ResponseEntity.ok(updatedRole);
+        return updatedRole;
     }
 
     @Transactional
-    public ResponseEntity<Void> deleteRole(UUID roleId) {
+    public boolean deleteRole(UUID roleId) {
         if (!roleRepository.existsById(roleId)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Role não encontrada!");
         }
         roleRepository.deleteById(roleId);
-        return ResponseEntity.noContent().build();
+        return true;
     }
 }

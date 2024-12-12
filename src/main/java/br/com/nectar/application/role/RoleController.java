@@ -4,6 +4,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import br.com.nectar.application.ResponseDTO;
 import br.com.nectar.domain.role.Role;
 import br.com.nectar.domain.role.RoleService;
 
@@ -21,35 +22,42 @@ public class RoleController {
     }
 
     @PostMapping
-    public ResponseEntity<Role> createRole(@RequestParam String name, @RequestBody(required = false) List<UUID> privilegeIds) {
-        return roleService.createRole(name, privilegeIds);
+    public ResponseEntity<?> createRole(@RequestParam String name, @RequestBody(required = false) List<UUID> privilegeIds) {
+        ResponseDTO<?> response = new ResponseDTO<>(roleService.createRole(name, privilegeIds));
+        return ResponseEntity.ok(response); 
     }
 
     @GetMapping
-    public ResponseEntity<Page<Role>> getAllRoles(Pageable pageable) {
-        return roleService.getAllRoles(pageable);
+    public ResponseEntity<?> getAllRoles(Pageable pageable) {
+        ResponseDTO<?> response = new ResponseDTO<>(roleService.getAllRoles(pageable));
+        return ResponseEntity.ok(response); 
     }
     @GetMapping("/{id}")
-    public ResponseEntity<Role> getRoleById(@PathVariable UUID id) {
-        return roleService.getRoleById(id);
+    public ResponseEntity<?> getRoleById(@PathVariable UUID id) {
+        ResponseDTO<?> response = new ResponseDTO<>(roleService.getRoleById(id));
+        return ResponseEntity.ok(response); 
     }
 
     @PostMapping("/{id}/privileges")
-    public ResponseEntity<Role> addPrivilegesToRole(@PathVariable UUID id, @RequestBody List<UUID> privilegeIds) {
-        return roleService.addPrivilegesToRole(id, privilegeIds);
+    public ResponseEntity<?> addPrivilegesToRole(@PathVariable UUID id, @RequestBody List<UUID> privilegeIds) {
+        ResponseDTO<?> response = new ResponseDTO<>(roleService.addPrivilegesToRole(id, privilegeIds));
+        return ResponseEntity.ok(response); 
     }
 
     @DeleteMapping("/{id}/privileges")
-    public ResponseEntity<Role> removePrivilegesFromRole(@PathVariable UUID id, @RequestBody List<UUID> privilegeIds) {
-        return roleService.removePrivilegesFromRole(id, privilegeIds);
+    public ResponseEntity<?> removePrivilegesFromRole(@PathVariable UUID id, @RequestBody List<UUID> privilegeIds) {
+        ResponseDTO<?> response = new ResponseDTO<>(roleService.removePrivilegesFromRole(id, privilegeIds));
+        return ResponseEntity.ok(response);
     }
 
     @PatchMapping("/{id}/name")
-    public ResponseEntity<Role> updateRoleName(@PathVariable UUID id, @RequestParam String newName) {
-        return roleService.updateRoleName(id, newName);
+    public ResponseEntity<?> updateRoleName(@PathVariable UUID id, @RequestParam String newName) {
+        ResponseDTO<?> response = new ResponseDTO<>(roleService.updateRoleName(id, newName));
+        return ResponseEntity.ok(response); 
     }
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteRole(@PathVariable UUID id) {
-        return roleService.deleteRole(id);
+    public ResponseEntity<?> deleteRole(@PathVariable UUID id) {
+        ResponseDTO<?> response = new ResponseDTO<>(roleService.deleteRole(id));
+        return ResponseEntity.ok(response); 
     }
 }

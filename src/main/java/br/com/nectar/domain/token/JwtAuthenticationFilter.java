@@ -46,14 +46,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             jwt = authorizationHeader.substring(7); // Remove "Bearer "
-            username = jwtUtil.extractUsername(jwt); // Extrai o username do token
+            username = jwtUtil.extractUsername(jwt); 
         }
     
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             Claims claims = jwtUtil.extractAllClaims(jwt);
             String role = claims.get("ROLE", String.class);
     
-            // Certifique-se de que a role tenha o prefixo ROLE_
             String authority = role.startsWith("ROLE_") ? role : "ROLE_" + role;
     
             // Configurando as autoridades
