@@ -83,8 +83,10 @@ public class ManagerService {
             userManager.setStatus(createForm.getStatus());
     
         // update auth
-        userService.updatePassword(userManager.getId(), createForm.getPassword());
-        userService.updateUsername(userManager.getId(), createForm.getEmail());
+        if(createForm.getPassword() != null)
+            userService.updatePassword(userManager.getId(), createForm.getPassword());
+        if(createForm.getEmail() != null)
+            userService.updateUsername(userManager.getId(), createForm.getEmail());
 
         Profile profile = userManager.getProfile();
         profile.setName(createForm.getName());
