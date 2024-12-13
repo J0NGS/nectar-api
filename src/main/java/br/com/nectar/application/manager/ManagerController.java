@@ -24,7 +24,7 @@ public class ManagerController {
         @RequestBody CreateManagerDTO request
     ) throws Exception {
         return ResponseEntity.ok(
-            new ResponseDTO(
+            new ResponseDTO<>(
                 managerService.create(
                     request,
                     userAuthentication.getUser()
@@ -40,7 +40,7 @@ public class ManagerController {
             @RequestBody GetPageDTO request
     ) throws Exception {
         return ResponseEntity.ok(
-            new ResponseDTO(
+            new ResponseDTO<>(
                 managerService.getPage(
                     userAuthentication.getUser(),
                     page,
@@ -57,7 +57,7 @@ public class ManagerController {
             @RequestBody CreateManagerDTO request
     ) throws Exception {
         return ResponseEntity.ok(
-            new ResponseDTO(
+            new ResponseDTO<>(
                 managerService.update(
                     managerId,
                     request
@@ -71,7 +71,7 @@ public class ManagerController {
             @AuthenticationPrincipal CustomUserDetails userAuthentication
     ) throws Exception {
         return ResponseEntity.ok(
-            new ResponseDTO(
+            new ResponseDTO<>(
                 managerService.getAllActive(
                     userAuthentication.getUser()
                 )
@@ -85,7 +85,7 @@ public class ManagerController {
             @PathVariable("managerId") UUID managerId
     ) throws Exception {
         return ResponseEntity.ok(
-            new ResponseDTO(
+            new ResponseDTO<>(
                 managerService.getById(managerId)
             )
         );

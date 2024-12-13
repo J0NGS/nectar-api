@@ -2,9 +2,7 @@ package br.com.nectar.application.user;
 
 import br.com.nectar.application.ResponseDTO;
 import br.com.nectar.application.user.dto.AuthRequestDTO;
-import br.com.nectar.application.user.dto.UserInfos;
 import br.com.nectar.application.user.dto.UserRegistrationRequest;
-import br.com.nectar.domain.token.JwtUtil;
 import lombok.RequiredArgsConstructor;
 
 import java.util.UUID;
@@ -19,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.service.annotation.DeleteExchange;
 
 import br.com.nectar.domain.user.UserService;
 
@@ -31,7 +28,7 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthRequestDTO authRequest) {
-        ResponseDTO<?> response = new ResponseDTO(userService.login(authRequest.username(), authRequest.password()));
+        ResponseDTO<?> response = new ResponseDTO<>(userService.login(authRequest.username(), authRequest.password()));
         return ResponseEntity.ok(response);
     }
 

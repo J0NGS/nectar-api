@@ -5,7 +5,6 @@ import br.com.nectar.domain.manager.ManagerRepository;
 import br.com.nectar.domain.privilege.Privilege;
 import br.com.nectar.domain.privilege.PrivilegeRepository;
 import br.com.nectar.application.user.dto.UserResponse;
-import br.com.nectar.application.user.dto.UserInfos;
 import br.com.nectar.application.user.dto.UserRegistrationRequest;
 import br.com.nectar.domain.auth.Auth;
 import br.com.nectar.domain.auth.AuthService;

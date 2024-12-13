@@ -8,7 +8,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import br.com.nectar.domain.role.RoleRepository;
 import lombok.RequiredArgsConstructor;
 
 @Service

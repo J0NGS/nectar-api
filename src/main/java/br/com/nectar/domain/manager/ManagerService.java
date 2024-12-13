@@ -4,7 +4,6 @@ import br.com.nectar.application.beekepeer.dto.GetPageDTO;
 import br.com.nectar.application.manager.dto.CreateManagerDTO;
 import br.com.nectar.application.user.dto.UserRegistrationRequest;
 import br.com.nectar.domain.address.Address;
-import br.com.nectar.domain.auth.Auth;
 import br.com.nectar.domain.profile.Profile;
 import br.com.nectar.domain.user.User;
 import br.com.nectar.domain.user.UserService;

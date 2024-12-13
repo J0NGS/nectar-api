@@ -1,12 +1,10 @@
 package br.com.nectar.application.privileges;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import br.com.nectar.application.ResponseDTO;
-import br.com.nectar.domain.privilege.Privilege;
 import br.com.nectar.domain.privilege.PrivilegeService;
 
 import java.util.UUID;

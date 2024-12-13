@@ -1,5 +1,4 @@
     package br.com.nectar.infrastructure.config.security;
-    import org.antlr.v4.runtime.atn.SemanticContext.OR;
     import org.springframework.context.annotation.Bean;
     import org.springframework.context.annotation.Configuration;
     import org.springframework.security.config.annotation.web.builders.HttpSecurity;

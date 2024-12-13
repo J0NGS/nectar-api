@@ -18,7 +18,6 @@ import br.com.nectar.domain.user.CustomUserDetailsService;
 import io.jsonwebtoken.Claims;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.List;
 
 @Component

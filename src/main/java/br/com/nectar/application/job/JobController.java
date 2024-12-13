@@ -24,7 +24,7 @@ public class JobController {
         @RequestBody CreateJobDTO request
     ) throws Exception {
         return ResponseEntity.ok(
-            new ResponseDTO(
+            new ResponseDTO<>(
                 jobService.create(
                     request,
                     userAuthentication.getUser()
@@ -40,7 +40,7 @@ public class JobController {
         @RequestBody GetJobPageDTO request
     ) throws Exception {
         return ResponseEntity.ok(
-            new ResponseDTO(
+            new ResponseDTO<>(
                 jobService.getPage(
                     userAuthentication.getUser(),
                     page,
@@ -58,7 +58,7 @@ public class JobController {
         @RequestBody GetJobPageDTO request
     ) throws Exception {
         return ResponseEntity.ok(
-            new ResponseDTO(
+            new ResponseDTO<>(
                 jobService.getPageByBeekeeperId(
                     beekeeperId,
                     userAuthentication.getUser(),
@@ -76,7 +76,7 @@ public class JobController {
         @RequestBody CreateJobDTO request
     ) throws Exception {
         return ResponseEntity.ok(
-            new ResponseDTO(
+            new ResponseDTO<>(
                 jobService.update(
                     Id,
                     request

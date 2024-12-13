@@ -4,7 +4,6 @@ import br.com.nectar.application.ResponseDTO;
 import br.com.nectar.application.beekepeer.dto.CreateBeekeeperDTO;
 import br.com.nectar.application.beekepeer.dto.GetPageDTO;
 import br.com.nectar.domain.beekeeper.BeekeeperService;
-import br.com.nectar.domain.job.JobService;
 import br.com.nectar.domain.user.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,15 +17,14 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class BeekeeperController {
     private final BeekeeperService beekeeperService;
-    private final JobService jobService;
 
     @PostMapping
-    public ResponseEntity<?> create (
+    public ResponseEntity<?> create(
         @AuthenticationPrincipal CustomUserDetails userAuthentication,
         @RequestBody CreateBeekeeperDTO request
     ) throws Exception {
         return ResponseEntity.ok(
-            new ResponseDTO(
+            new ResponseDTO<>(
                 beekeeperService.create(
                     request,
                     userAuthentication.getUser()
@@ -34,6 +32,7 @@ public class BeekeeperController {
             )
         );
     }
+    
 
     @PostMapping("/page/{page}")
     public ResponseEntity<?> getPage (
@@ -42,7 +41,7 @@ public class BeekeeperController {
         @RequestBody GetPageDTO request
     ) throws Exception {
         return ResponseEntity.ok(
-            new ResponseDTO(
+            new ResponseDTO<>(
                 beekeeperService.getPage(
                     userAuthentication.getUser(),
                     page,
@@ -59,7 +58,7 @@ public class BeekeeperController {
         @RequestBody CreateBeekeeperDTO request
     ) throws Exception {
         return ResponseEntity.ok(
-            new ResponseDTO(
+            new ResponseDTO<>(
                 beekeeperService.update(
                     beekeeperId,
                     request
@@ -73,7 +72,7 @@ public class BeekeeperController {
         @AuthenticationPrincipal CustomUserDetails userAuthentication
     ) throws Exception {
         return ResponseEntity.ok(
-            new ResponseDTO(
+            new ResponseDTO<>(
                 beekeeperService.getAllActiveByUser(
                     userAuthentication.getUser()
                 )
@@ -87,7 +86,7 @@ public class BeekeeperController {
         @PathVariable("beekeeperId") UUID beekeeperId
     ) throws Exception {
         return ResponseEntity.ok(
-            new ResponseDTO(
+            new ResponseDTO<>(
                 beekeeperService.getById(beekeeperId)
             )
         );

@@ -24,7 +24,7 @@ public class DashBoardController {
         @RequestBody GetDashJobPageDTO request
     ) throws Exception {
         return ResponseEntity.ok(
-            new ResponseDTO(
+            new ResponseDTO<>(
                 jobService.getPageForDash(
                     userAuthentication.getUser(),
                     page,
@@ -40,7 +40,7 @@ public class DashBoardController {
         @RequestParam("month") String month
     ) {
         return ResponseEntity.ok(
-            new ResponseDTO(
+            new ResponseDTO<>(
                 jobService.getMonthlyGraph(
                     userAuthentication.getUser(),
                         LocalDate.parse(month)
@@ -55,7 +55,7 @@ public class DashBoardController {
             @RequestParam("month") String month
     ) {
         return ResponseEntity.ok(
-            new ResponseDTO(
+            new ResponseDTO<>(
                 jobService.getMonthlyBoard(
                     userAuthentication.getUser(),
                     LocalDate.parse(month)
