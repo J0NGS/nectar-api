@@ -84,4 +84,15 @@ public class JobController {
             )
         );
     }
+
+    @GetMapping("/{jobId}")
+    public ResponseEntity<?> getById (
+        @PathVariable("jobId") UUID jobId
+    ) throws Exception {
+        return ResponseEntity.ok(
+            new ResponseDTO<>(
+                jobService.getById(jobId)
+            )
+        );
+    }
 }
