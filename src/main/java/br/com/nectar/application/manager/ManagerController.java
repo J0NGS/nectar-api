@@ -79,14 +79,14 @@ public class ManagerController {
         );
     }
 
-    @GetMapping("/{managerId}")
+    @GetMapping("/{userId}")
     public ResponseEntity<?> getById (
             @AuthenticationPrincipal CustomUserDetails userAuthentication,
-            @PathVariable("managerId") UUID managerId
+            @PathVariable("userId") UUID userId
     ) throws Exception {
         return ResponseEntity.ok(
             new ResponseDTO<>(
-                managerService.getById(managerId)
+                managerService.getByUserId(userId)
             )
         );
     }

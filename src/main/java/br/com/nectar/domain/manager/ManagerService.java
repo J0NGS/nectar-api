@@ -122,6 +122,14 @@ public class ManagerService {
             ));
     }
 
+    public Manager getByUserId (UUID userId) {
+        return managerRepository.getByUserId(userId)
+                .orElseThrow(() -> new FrontDisplayableException(
+                        HttpStatus.BAD_REQUEST,
+                        "Não foi possível encontrar o gestor!"
+                ));
+    }
+
     public Page<Manager> getPage (
         User user,
         Integer page,

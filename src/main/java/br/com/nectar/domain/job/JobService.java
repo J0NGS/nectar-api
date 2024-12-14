@@ -181,9 +181,12 @@ public class JobService {
             default -> List.of(JobsStatus.values());
         };
 
+        var init = getPageDTO.getMoth().with(TemporalAdjusters.firstDayOfMonth()).atStartOfDay();
+        var end = getPageDTO.getMoth().with(TemporalAdjusters.lastDayOfMonth()).plusDays(1).atTime(23, 59, 59);
+
         return jobRepository.getPageByStatusAndDate(
-            getPageDTO.getMoth().atStartOfDay(),
-            getPageDTO.getMoth().atTime(23, 59, 59),
+            init,
+            end,
             org.getId(),
             status,
             PageRequest.of(
