@@ -23,11 +23,13 @@ import java.util.List;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final JwtUtil jwtUtil;
+    private final JwtValidator jwtValidator;
     private final CustomUserDetailsService userDetailsService;
+    static final String PREFIX = "Bearer ";
 
-    public JwtAuthenticationFilter(JwtUtil jwtUtil, CustomUserDetailsService userDetailsService) {
-        this.jwtUtil = jwtUtil;
+
+    public JwtAuthenticationFilter(JwtValidator jwtValidator, CustomUserDetailsService userDetailsService) {
+        this.jwtValidator = jwtValidator;
         this.userDetailsService = userDetailsService;
     }
 
@@ -43,18 +45,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String username = null;
         String jwt = null;
     
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+        if (authorizationHeader != null && authorizationHeader.startsWith(PREFIX)) {
             jwt = authorizationHeader.substring(7); // Remove "Bearer "
-            username = jwtUtil.extractUsername(jwt); 
+            Claims claims = jwtValidator.validateTokenAndGetClaims(jwt);
+            username = claims.getSubject(); 
         }
     
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            Claims claims = jwtUtil.extractAllClaims(jwt);
+            Claims claims = jwtValidator.validateTokenAndGetClaims(jwt);
             String role = claims.get("ROLE", String.class);
     
+            // Configurando as autoridades
             String authority = role.startsWith("ROLE_") ? role : "ROLE_" + role;
     
-            // Configurando as autoridades
             List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(authority));
     
             // Configurando o contexto de autenticação

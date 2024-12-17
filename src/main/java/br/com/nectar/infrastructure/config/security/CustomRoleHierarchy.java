@@ -17,7 +17,6 @@ public class CustomRoleHierarchy implements RoleHierarchy {
 
         Set<GrantedAuthority> reachableAuthorities = new HashSet<>(authorities);
 
-        // Adiciona a lógica para expandir a hierarquia
         authorities.forEach(authority -> {
             if ("ROLE_ORG".equals(authority.getAuthority())) {
                 reachableAuthorities.add(new SimpleGrantedAuthority("ROLE_ORG"));
@@ -26,10 +25,6 @@ public class CustomRoleHierarchy implements RoleHierarchy {
                 reachableAuthorities.add(new SimpleGrantedAuthority("ROLE_MANAGER"));
             }
         });
-
-        reachableAuthorities.forEach(auth -> System.out.println("Role alcançável: " + auth.getAuthority()));
-
-
         return reachableAuthorities;
     }
 }

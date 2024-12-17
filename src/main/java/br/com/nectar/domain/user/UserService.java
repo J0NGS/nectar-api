@@ -11,7 +11,7 @@ import br.com.nectar.domain.auth.AuthService;
 import br.com.nectar.domain.profile.Profile;
 import br.com.nectar.domain.role.Role;
 import br.com.nectar.domain.role.RoleRepository;
-import br.com.nectar.domain.token.JwtUtil;
+import br.com.nectar.domain.token.JwtGenerator;
 import br.com.nectar.infrastructure.services.utils.DocumentValidatorUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +31,7 @@ import org.springframework.web.server.ResponseStatusException;
 @RequiredArgsConstructor
 public class UserService {
     private final AuthenticationManager authenticationManager;
-    private final JwtUtil jwtUtil;
+    private final JwtGenerator jwtGenerator;
     private final UserRepository userRepository;
     private final PrivilegeRepository privilegeRepository;
     private final ManagerRepository managerRepository;
@@ -45,7 +45,7 @@ public class UserService {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(username, password));
 
-            return jwtUtil.generateToken(authentication);
+            return jwtGenerator.generateToken(authentication);
         } catch (AuthenticationException e) {
             throw new ResponseStatusException(
                     HttpStatus.UNAUTHORIZED, "Credenciais inválidas");
