@@ -13,4 +13,5 @@ public class MonthlyBoardDTO {
     private Long newBeekeepers = 0L;
     private Long revenue = 0L;
     private Long waste = 0L;
+    private Long weight = 0L;
 }

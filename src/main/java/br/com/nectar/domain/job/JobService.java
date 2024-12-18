@@ -298,18 +298,11 @@ public class JobService {
                 org.getId(),
                 List.of(JobsStatus.CONCLUDED, JobsStatus.IN_PROGRESS));
 
-
         var JobsConcludes = jobsInMonth.stream().filter(job -> job.getStatus().equals(JobsStatus.CONCLUDED));
         var concludeProccess = JobsConcludes.count();
+        var weight = jobsInMonth.size() > 0 ? jobsInMonth.stream().mapToInt(Job::getWeight).sum() : 0;
         var revenue = concludeProccess > 0 ? JobsConcludes.mapToInt(Job::getPostProcessingRevenue).sum() : 0;
-
-        var waste = concludeProccess > 0 ?
-                jobsInMonth.stream().mapToInt(Job::getWasteRate).sum()
-                : 0
-                / jobsInMonth.size() > 0
-                    ? jobsInMonth.size()
-                    : 1;
-
+        var waste =  concludeProccess > 0 ? JobsConcludes.mapToInt(Job::getWaste).sum() : 0;
         var inProgress = jobsInMonth.stream().filter(job -> job.getStatus().equals(JobsStatus.IN_PROGRESS)).count();
 
         var newBeekeepers = beekeeperService.getQtdNewInMonth(org, month);
@@ -319,6 +312,7 @@ public class JobService {
         board.setConcludeServices(concludeProccess);
         board.setInProcessingServices(inProgress);
         board.setNewBeekeepers(newBeekeepers);
+        board.setWeight((long) weight);
 
         return board;
     }
