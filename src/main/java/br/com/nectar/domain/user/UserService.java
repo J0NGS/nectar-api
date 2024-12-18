@@ -11,7 +11,7 @@ import br.com.nectar.domain.auth.AuthService;
 import br.com.nectar.domain.profile.Profile;
 import br.com.nectar.domain.role.Role;
 import br.com.nectar.domain.role.RoleRepository;
-import br.com.nectar.domain.token.JwtGenerator;
+import br.com.nectar.infrastructure.jwt.JwtGenerator;
 import br.com.nectar.infrastructure.services.utils.DocumentValidatorUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

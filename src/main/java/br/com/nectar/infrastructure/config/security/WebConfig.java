@@ -10,9 +10,9 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
     import org.springframework.web.cors.CorsConfigurationSource;
     import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-    import br.com.nectar.domain.token.JwtAuthenticationFilter;
+import br.com.nectar.infrastructure.jwt.JwtAuthenticationFilter;
 
-    import java.util.List;
+import java.util.List;
 
     @Configuration
     public class WebConfig {

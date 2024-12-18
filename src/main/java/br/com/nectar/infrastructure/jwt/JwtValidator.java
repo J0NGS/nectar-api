@@ -1,4 +1,4 @@
-package br.com.nectar.domain.token;
+package br.com.nectar.infrastructure.jwt;
 
 import java.util.Date;
 
