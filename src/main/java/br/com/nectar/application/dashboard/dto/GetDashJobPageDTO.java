@@ -9,5 +9,5 @@ import java.time.LocalDate;
 public class GetDashJobPageDTO {
     private Integer pageSize = 10;
     private JobsStatusFilter status = JobsStatusFilter.ALL;
-    private LocalDate moth = null;
+    private LocalDate month = null;
 }

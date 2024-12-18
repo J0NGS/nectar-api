@@ -1,7 +1,8 @@
     package br.com.nectar.infrastructure.config.security;
     import org.springframework.context.annotation.Bean;
     import org.springframework.context.annotation.Configuration;
-    import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
     import org.springframework.security.config.http.SessionCreationPolicy;
     import org.springframework.security.web.SecurityFilterChain;
     import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -50,6 +51,9 @@
                     .requestMatchers(USERS + "{userId}/update-password").hasRole(MANAGER)
                     .requestMatchers(USERS + "{userId}/update-username").hasRole(MANAGER)
                     .requestMatchers(USERS + "register").hasRole(ORG)
+                    .requestMatchers(USERS + "/{userId}/privileges/{privilegeId}/remove").hasRole(ORG)
+                    .requestMatchers(USERS + "/{userId}/privileges/{privilegeId}/add").hasRole(ORG)
+                    .requestMatchers(HttpMethod.DELETE, USERS).hasRole(ORG)
                     .requestMatchers(ROLES + "**").hasRole(ORG)
                     .requestMatchers(DASHBOARD + "**").hasRole(MANAGER)
                     .requestMatchers(JOBS + "**").hasRole(MANAGER)
