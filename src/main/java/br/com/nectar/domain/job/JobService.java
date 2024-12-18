@@ -31,10 +31,9 @@ public class JobService {
     private final UserService userService;
     private final BeekeeperService beekeeperService;
 
-    public Job create (
-        CreateJobDTO createJobDTO,
-        User user
-    ) {
+    public Job create(
+            CreateJobDTO createJobDTO,
+            User user) {
         User org = userService.getUserOrg(user.getId());
         Beekeeper beekeeper = beekeeperService.getById(createJobDTO.getBeekeeperId());
 
@@ -60,7 +59,7 @@ public class JobService {
         job.setStatus(createJobDTO.getStatus());
         job.setObservation(createJobDTO.getObservation());
 
-        if(createJobDTO.getPostProcessing() != null) {
+        if (createJobDTO.getPostProcessing() != null) {
             var postProcessing = createJobDTO.getPostProcessing();
 
             job.setWaste(postProcessing.getWaste());
@@ -86,10 +85,9 @@ public class JobService {
         return jobRepository.save(job);
     }
 
-    public Job update (
-        UUID jobId,
-        CreateJobDTO createJobDTO
-    ) {
+    public Job update(
+            UUID jobId,
+            CreateJobDTO createJobDTO) {
         var job = getById(jobId);
 
         job.setStatus(createJobDTO.getStatus());
@@ -109,7 +107,7 @@ public class JobService {
         job.setStatus(createJobDTO.getStatus());
         job.setObservation(createJobDTO.getObservation());
 
-        if(createJobDTO.getPostProcessing() != null) {
+        if (createJobDTO.getPostProcessing() != null) {
             var postProcessing = createJobDTO.getPostProcessing();
 
             job.setWaste(postProcessing.getWaste());
@@ -135,49 +133,44 @@ public class JobService {
         return jobRepository.save(job);
     }
 
-    public Job getById (UUID id) {
+    public Job getById(UUID id) {
         return jobRepository.findById(id)
-            .orElseThrow(() -> new FrontDisplayableException(
-                HttpStatus.BAD_REQUEST,
-                "Não foi possível encontrar o serviço Informado!"
-            ));
+                .orElseThrow(() -> new FrontDisplayableException(
+                        HttpStatus.BAD_REQUEST,
+                        "Não foi possível encontrar o serviço Informado!"));
     }
 
-    public Page<Job> getPage (
-        User user,
-        Integer page,
-        GetJobPageDTO getPageDTO
-    ) {
+    public Page<Job> getPage(
+            User user,
+            Integer page,
+            GetJobPageDTO getPageDTO) {
         User org = userService.getUserOrg(user.getId());
 
         List<JobsStatus> status = switch (getPageDTO.getStatus()) {
             case IN_PROGRESS -> List.of(JobsStatus.IN_PROGRESS);
             case CANCELED -> List.of(JobsStatus.CANCELED);
-            case CONCLUDED-> List.of(JobsStatus.CONCLUDED);
+            case CONCLUDED -> List.of(JobsStatus.CONCLUDED);
             default -> List.of(JobsStatus.values());
         };
 
         return jobRepository.getPageByStatus(
-            org.getId(),
-            status,
-            PageRequest.of(
-                page,
-                getPageDTO.getPageSize() > 0 ? getPageDTO.getPageSize() : 10
-            )
-        );
+                org.getId(),
+                status,
+                PageRequest.of(
+                        page,
+                        getPageDTO.getPageSize() > 0 ? getPageDTO.getPageSize() : 10));
     }
 
-    public Page<Job> getPageForDash (
-        User user,
-        Integer page,
-        GetDashJobPageDTO getPageDTO
-    ) {
+    public Page<Job> getPageForDash(
+            User user,
+            Integer page,
+            GetDashJobPageDTO getPageDTO) {
         User org = userService.getUserOrg(user.getId());
 
         List<JobsStatus> status = switch (getPageDTO.getStatus()) {
             case IN_PROGRESS -> List.of(JobsStatus.IN_PROGRESS);
             case CANCELED -> List.of(JobsStatus.CANCELED);
-            case CONCLUDED-> List.of(JobsStatus.CONCLUDED);
+            case CONCLUDED -> List.of(JobsStatus.CONCLUDED);
             default -> List.of(JobsStatus.values());
         };
 
@@ -185,48 +178,42 @@ public class JobService {
         var end = getPageDTO.getMonth().with(TemporalAdjusters.lastDayOfMonth()).plusDays(1).atTime(23, 59, 59);
 
         return jobRepository.getPageByStatusAndDate(
-            init,
-            end,
-            org.getId(),
-            status,
-            PageRequest.of(
-                page,
-                getPageDTO.getPageSize() > 0 ? getPageDTO.getPageSize() : 10
-            )
-        );
+                init,
+                end,
+                org.getId(),
+                status,
+                PageRequest.of(
+                        page,
+                        getPageDTO.getPageSize() > 0 ? getPageDTO.getPageSize() : 10));
     }
 
-    public Page<Job> getPageByBeekeeperId (
-        UUID beekeeperId,
-        User user,
-        Integer page,
-        GetJobPageDTO getPageDTO
-    ) {
+    public Page<Job> getPageByBeekeeperId(
+            UUID beekeeperId,
+            User user,
+            Integer page,
+            GetJobPageDTO getPageDTO) {
         Beekeeper beekeeper = beekeeperService.getById(beekeeperId);
         User org = userService.getUserOrg(user.getId());
 
         List<JobsStatus> status = switch (getPageDTO.getStatus()) {
             case IN_PROGRESS -> List.of(JobsStatus.IN_PROGRESS);
             case CANCELED -> List.of(JobsStatus.CANCELED);
-            case CONCLUDED-> List.of(JobsStatus.CONCLUDED);
+            case CONCLUDED -> List.of(JobsStatus.CONCLUDED);
             default -> List.of(JobsStatus.values());
         };
 
         return jobRepository.getPageByStatusAndBeekeeper(
-            org.getId(),
-            beekeeper.getId(),
-            status,
-            PageRequest.of(
-                page,
-                getPageDTO.getPageSize() > 0 ? getPageDTO.getPageSize() : 10
-            )
-        );
+                org.getId(),
+                beekeeper.getId(),
+                status,
+                PageRequest.of(
+                        page,
+                        getPageDTO.getPageSize() > 0 ? getPageDTO.getPageSize() : 10));
     }
 
-    public MonthlyGraphDTO getMonthlyGraph (
-        User user,
-        LocalDate month
-    ) {
+    public MonthlyGraphDTO getMonthlyGraph(
+            User user,
+            LocalDate month) {
         var graphData = new MonthlyGraphDTO();
 
         var org = userService.getUserOrg(user.getId());
@@ -235,11 +222,10 @@ public class JobService {
         var end = month.with(TemporalAdjusters.lastDayOfMonth()).plusDays(1);
 
         var jobsInMonth = jobRepository.getAllByStatus(
-            init.atStartOfDay(),
-            end.atTime(23, 59, 59),
-            org.getId(),
-            List.of(JobsStatus.CONCLUDED)
-        );
+                init.atStartOfDay(),
+                end.atTime(23, 59, 59),
+                org.getId(),
+                List.of(JobsStatus.CONCLUDED));
 
         var start = month.with(TemporalAdjusters.firstDayOfMonth());
         var data = new ArrayList<MonthlyGraphData>();
@@ -247,42 +233,40 @@ public class JobService {
         while (start.isBefore(end)) {
             LocalDate finalStart = start;
 
-            var createAtDay = jobsInMonth.stream().filter(
-                job -> job.getCreatedAt().toLocalDate().isEqual(finalStart)
-            );
+            var jobsForDay = jobsInMonth.stream()
+                    .filter(job -> job.getCreatedAt().toLocalDate().isEqual(finalStart))
+                    .toList();
 
-            if(createAtDay.findAny().isPresent()) {
-                var qtd = createAtDay.findAny().isEmpty() ? 1 : createAtDay.count();
+            if (!jobsForDay.isEmpty()) {
+                var qtd = jobsForDay.size();
 
-                var mediaWaste = createAtDay
-                    .map(Job::getWasteRate)
-                    .filter(Objects::nonNull)
-                    .mapToInt(Integer::intValue)
-                    .sum() / qtd;
+                var mediaWaste = jobsForDay.stream()
+                        .map(Job::getWasteRate)
+                        .filter(Objects::nonNull)
+                        .mapToInt(Integer::intValue)
+                        .average()
+                        .orElse(0);
 
-                var mediaRevenue = createAtDay
-                    .map(Job::getPostProcessingRevenue)
-                    .filter(Objects::nonNull)
-                    .mapToInt(Integer::intValue)
-                    .sum() / qtd;
+                var mediaRevenue = jobsForDay.stream()
+                        .map(Job::getPostProcessingRevenue)
+                        .filter(Objects::nonNull)
+                        .mapToInt(Integer::intValue)
+                        .average()
+                        .orElse(0);
 
                 data.add(
-                    new MonthlyGraphData(
-                        start,
-                        qtd,
-                        mediaWaste,
-                        mediaRevenue
-                    )
-                );
+                        new MonthlyGraphData(
+                                start,
+                                (long) qtd,
+                                (long) mediaWaste,
+                                (long) mediaRevenue));
             } else {
                 data.add(
-                    new MonthlyGraphData(
-                        start,
-                        0L,
-                        0L,
-                        0L
-                    )
-                );
+                        new MonthlyGraphData(
+                                start,
+                                0L,
+                                0L,
+                                0L));
             }
 
             start = start.plusDays(1);
@@ -294,10 +278,9 @@ public class JobService {
         return graphData;
     }
 
-    public MonthlyBoardDTO getMonthlyBoard (
-        User user,
-        LocalDate month
-    ) {
+    public MonthlyBoardDTO getMonthlyBoard(
+            User user,
+            LocalDate month) {
         var board = new MonthlyBoardDTO();
 
         var org = userService.getUserOrg(user.getId());
@@ -306,11 +289,10 @@ public class JobService {
         var end = month.with(TemporalAdjusters.lastDayOfMonth()).plusDays(1);
 
         var jobsInMonth = jobRepository.getAllByStatus(
-            init.atStartOfDay(),
-            end.atTime(23, 59, 59),
-            org.getId(),
-            List.of(JobsStatus.CONCLUDED)
-        );
+                init.atStartOfDay(),
+                end.atTime(23, 59, 59),
+                org.getId(),
+                List.of(JobsStatus.CONCLUDED));
 
         var revenue = jobsInMonth.stream().mapToInt(Job::getPostProcessingRevenue).sum();
         var waste = jobsInMonth.stream().mapToInt(Job::getWasteRate).sum() / jobsInMonth.size();
