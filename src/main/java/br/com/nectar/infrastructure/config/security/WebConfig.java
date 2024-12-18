@@ -47,11 +47,11 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(authorize -> authorize
                     .requestMatchers("/error").anonymous()
+                    .requestMatchers(USERS + "register").permitAll()
                     .requestMatchers(USERS + "login").permitAll()
                     .requestMatchers(USERS + "{userId}/update-password").hasRole(MANAGER)
                     .requestMatchers(USERS + "{userId}/update-username").hasRole(MANAGER)
                     //.requestMatchers(USERS + "register").hasRole(ORG)
-                    .requestMatchers(USERS + "register").permitAll()
                     .requestMatchers(USERS + "/{userId}/privileges/{privilegeId}/remove").hasRole(ORG)
                     .requestMatchers(USERS + "/{userId}/privileges/{privilegeId}/add").hasRole(ORG)
                     .requestMatchers(HttpMethod.DELETE, USERS).hasRole(ORG)
