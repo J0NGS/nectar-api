@@ -80,6 +80,8 @@ public class JobService {
                     job.setWasteRate(0); // Define 0 caso o peso inicial seja inválido
                 }
             }
+
+            job.setStatus(JobsStatus.CONCLUDED);
         }
 
         return jobRepository.save(job);
@@ -128,6 +130,8 @@ public class JobService {
                     job.setWasteRate(0); // Define 0 caso o peso inicial seja inválido
                 }
             }
+
+            job.setStatus(JobsStatus.CONCLUDED);
         }
 
         return jobRepository.save(job);
@@ -292,11 +296,20 @@ public class JobService {
                 init.atStartOfDay(),
                 end.atTime(23, 59, 59),
                 org.getId(),
-                List.of(JobsStatus.CONCLUDED));
+                List.of(JobsStatus.CONCLUDED, JobsStatus.IN_PROGRESS));
 
-        var revenue = jobsInMonth.stream().mapToInt(Job::getPostProcessingRevenue).sum();
-        var waste = jobsInMonth.stream().mapToInt(Job::getWasteRate).sum() / jobsInMonth.size();
-        var concludeProccess = jobsInMonth.stream().filter(job -> job.getStatus().equals(JobsStatus.CONCLUDED)).count();
+
+        var JobsConcludes = jobsInMonth.stream().filter(job -> job.getStatus().equals(JobsStatus.CONCLUDED));
+        var concludeProccess = JobsConcludes.count();
+        var revenue = concludeProccess > 0 ? JobsConcludes.mapToInt(Job::getPostProcessingRevenue).sum() : 0;
+
+        var waste = concludeProccess > 0 ?
+                jobsInMonth.stream().mapToInt(Job::getWasteRate).sum()
+                : 0
+                / jobsInMonth.size() > 0
+                    ? jobsInMonth.size()
+                    : 1;
+
         var inProgress = jobsInMonth.stream().filter(job -> job.getStatus().equals(JobsStatus.IN_PROGRESS)).count();
 
         var newBeekeepers = beekeeperService.getQtdNewInMonth(org, month);
