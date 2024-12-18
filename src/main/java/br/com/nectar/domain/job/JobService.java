@@ -225,7 +225,7 @@ public class JobService {
                 init.atStartOfDay(),
                 end.atTime(23, 59, 59),
                 org.getId(),
-                List.of(JobsStatus.CONCLUDED));
+                List.of(JobsStatus.CONCLUDED, JobsStatus.IN_PROGRESS));
 
         var start = month.with(TemporalAdjusters.firstDayOfMonth());
         var data = new ArrayList<MonthlyGraphData>();
