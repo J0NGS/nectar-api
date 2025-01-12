@@ -5,7 +5,9 @@ import br.com.nectar.domain.manager.ManagerRepository;
 import br.com.nectar.domain.privilege.Privilege;
 import br.com.nectar.domain.privilege.PrivilegeRepository;
 import br.com.nectar.application.user.dto.UserResponse;
+import br.com.nectar.application.manager.dto.CreateManagerDTO;
 import br.com.nectar.application.user.dto.UserRegistrationRequest;
+import br.com.nectar.domain.address.Address;
 import br.com.nectar.domain.auth.Auth;
 import br.com.nectar.domain.auth.AuthService;
 import br.com.nectar.domain.profile.Profile;
@@ -199,6 +201,52 @@ public class UserService {
 
         userRepository.deleteById(userId);
         return true;
+    }
+
+    public User update (
+        UUID userId,
+        CreateManagerDTO createForm
+    ) {
+        User currentUser = userRepository.findById(userId).orElseThrow(() ->
+            new ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                "Usuário não encontrado!"
+            )
+        );
+
+        if(createForm.getStatus() != null)
+            currentUser.setStatus(createForm.getStatus());
+    
+        // update auth
+        if(createForm.getPassword() != null)
+            updatePassword(currentUser.getId(), createForm.getPassword());
+        if(createForm.getEmail() != null)
+            updateUsername(currentUser.getId(), createForm.getEmail());
+
+        Profile profile = currentUser.getProfile();
+        profile.setName(createForm.getName());
+        profile.setDocument(createForm.getDocument());
+        profile.setPhone(createForm.getPhone());
+        profile.setBirthDate(createForm.getBirthDate());
+
+        if(createForm.getAddress() != null) {
+            Address address = profile.getAddress() != null
+                    ? profile.getAddress()
+                    : new Address();
+
+            address.setStreet(createForm.getAddress().getStreet());
+            address.setNumber(createForm.getAddress().getNumber());
+            address.setCep(createForm.getAddress().getCep());
+            address.setCity(createForm.getAddress().getCity());
+            address.setState(createForm.getAddress().getState());
+            address.setProvince(createForm.getAddress().getProvince());
+
+            profile.setAddress(address);
+        }
+
+        currentUser.setProfile(profile);
+
+        return userRepository.save(currentUser);
     }
 
 }
