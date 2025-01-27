@@ -5,12 +5,14 @@ import br.com.nectar.application.beekepeer.dto.CreateBeekeeperDTO;
 import br.com.nectar.application.beekepeer.dto.GetPageDTO;
 import br.com.nectar.domain.beekeeper.BeekeeperService;
 import br.com.nectar.domain.user.CustomUserDetails;
+import br.com.nectar.domain.user.UserStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
+
 
 @RestController
 @RequestMapping("/nectar/api/beekeepers")
@@ -60,6 +62,22 @@ public class BeekeeperController {
         return ResponseEntity.ok(
             new ResponseDTO<>(
                 beekeeperService.update(
+                    beekeeperId,
+                    request
+                )
+            )
+        );
+    }
+
+    @PutMapping("/{beekeeperId}/status")
+    public ResponseEntity<?> disableManager(
+    @AuthenticationPrincipal CustomUserDetails userAuthentication,
+    @PathVariable("beekeeperId") UUID beekeeperId,
+    @RequestBody UserStatus request) throws Exception {
+        
+        return ResponseEntity.ok(
+            new ResponseDTO<>(
+                beekeeperService.disableBeekeeper(
                     beekeeperId,
                     request
                 )

@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
@@ -154,5 +155,22 @@ public class BeekeeperService {
             end.atTime(23, 59, 59),
             UserStatus.ACTIVE
         );
+    }
+
+    public Beekeeper disableBeekeeper (
+        UUID managerId,
+        UserStatus status
+    ) {
+        Beekeeper beekeeper = beekeeperRepository.findById(managerId).orElseThrow(() ->
+            new ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                "Gestor não encontrado!"
+            )
+        );
+
+        
+        beekeeper.setStatus(status);
+
+        return beekeeperRepository.save(beekeeper);
     }
 }
