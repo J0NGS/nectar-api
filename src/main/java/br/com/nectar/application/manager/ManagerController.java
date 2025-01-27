@@ -5,12 +5,17 @@ import br.com.nectar.application.beekepeer.dto.GetPageDTO;
 import br.com.nectar.application.manager.dto.CreateManagerDTO;
 import br.com.nectar.domain.manager.ManagerService;
 import br.com.nectar.domain.user.CustomUserDetails;
+import br.com.nectar.domain.user.UserStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PathVariable;
+
 
 @RestController
 @RequestMapping("/nectar/api/managers")
@@ -59,6 +64,22 @@ public class ManagerController {
         return ResponseEntity.ok(
             new ResponseDTO<>(
                 managerService.update(
+                    managerId,
+                    request
+                )
+            )
+        );
+    }
+
+    @PutMapping("/{managerId}/status")
+    public ResponseEntity<?> disableManager(
+    @AuthenticationPrincipal CustomUserDetails userAuthentication,
+    @PathVariable("managerId") UUID managerId,
+    @RequestBody UserStatus request) throws Exception {
+        
+        return ResponseEntity.ok(
+            new ResponseDTO<>(
+                managerService.disableManager(
                     managerId,
                     request
                 )
