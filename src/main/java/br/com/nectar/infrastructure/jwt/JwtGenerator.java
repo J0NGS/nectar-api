@@ -4,10 +4,13 @@ import java.util.Date;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ResponseStatusException;
 
 import br.com.nectar.domain.user.CustomUserDetails;
+import br.com.nectar.domain.user.UserStatus;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
@@ -22,11 +25,15 @@ public class JwtGenerator {
     public String generateToken(Authentication authentication) {
         var userDetails = (CustomUserDetails) authentication.getPrincipal();
         var user = userDetails.getUser();
-    
+
+        
         var privileges = user.getPrivileges().stream()
                 .map(privilege -> privilege.getName())
                 .toArray(String[]::new);
-    
+        
+        if (user.getStatus().equals(UserStatus.INACTIVE)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Usuário inativo");
+        }
         return Jwts.builder()
                 .setSubject(user.getAuth().getUsername())
                 .addClaims(
