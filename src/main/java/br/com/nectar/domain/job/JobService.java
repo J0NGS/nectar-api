@@ -14,6 +14,7 @@ import br.com.nectar.infrastructure.exceptions.FrontDisplayableException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -182,13 +183,16 @@ public class JobService {
         var end = getPageDTO.getMonth().with(TemporalAdjusters.lastDayOfMonth()).plusDays(1).atTime(23, 59, 59);
 
         return jobRepository.getPageByStatusAndDate(
-                init,
-                end,
-                org.getId(),
-                status,
-                PageRequest.of(
-                        page,
-                        getPageDTO.getPageSize() > 0 ? getPageDTO.getPageSize() : 10));
+            init,
+            end,
+            org.getId(),
+            status,
+            PageRequest.of(
+                page,
+                getPageDTO.getPageSize() > 0 ? getPageDTO.getPageSize() : 10,
+                Sort.by(Sort.Direction.DESC, "createdAt")
+            )
+        );
     }
 
     public Page<Job> getPageByBeekeeperId(
