@@ -2,6 +2,7 @@ package br.com.nectar.domain.beekeeper;
 
 import br.com.nectar.application.beekepeer.dto.CreateBeekeeperDTO;
 import br.com.nectar.application.beekepeer.dto.GetPageDTO;
+import br.com.nectar.application.user.dto.UpdateUserStatusDTO;
 import br.com.nectar.domain.address.Address;
 import br.com.nectar.domain.profile.Profile;
 import br.com.nectar.domain.user.User;
@@ -92,6 +93,18 @@ public class BeekeeperService {
         }
 
         beekeeper.setProfile(profile);
+
+        return beekeeperRepository.save(beekeeper);
+    }
+
+    public Beekeeper updateStatus (UUID id, UpdateUserStatusDTO request) {
+        var beekeeper = beekeeperRepository.findById(id)
+            .orElseThrow(() -> new FrontDisplayableException(
+                HttpStatus.BAD_REQUEST,
+                "Não foi possível encontrar o apicultor!"
+            ));
+
+        beekeeper.setStatus(request.getStatus());
 
         return beekeeperRepository.save(beekeeper);
     }

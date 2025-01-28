@@ -3,6 +3,7 @@ package br.com.nectar.application.beekepeer;
 import br.com.nectar.application.ResponseDTO;
 import br.com.nectar.application.beekepeer.dto.CreateBeekeeperDTO;
 import br.com.nectar.application.beekepeer.dto.GetPageDTO;
+import br.com.nectar.application.user.dto.UpdateUserStatusDTO;
 import br.com.nectar.domain.beekeeper.BeekeeperService;
 import br.com.nectar.domain.user.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
@@ -55,11 +56,27 @@ public class BeekeeperController {
     public ResponseEntity<?> update (
         @AuthenticationPrincipal CustomUserDetails userAuthentication,
         @PathVariable("beekeeperId") UUID beekeeperId,
-        @RequestBody CreateBeekeeperDTO request
+    @RequestBody CreateBeekeeperDTO request
     ) throws Exception {
         return ResponseEntity.ok(
             new ResponseDTO<>(
                 beekeeperService.update(
+                    beekeeperId,
+                    request
+                )
+            )
+        );
+    }
+
+    @PutMapping("/{beekeeperId}/status")
+    public ResponseEntity<?> updateStatus (
+        @AuthenticationPrincipal CustomUserDetails userAuthentication,
+        @PathVariable("beekeeperId") UUID beekeeperId,
+        @RequestBody UpdateUserStatusDTO request
+    ) throws Exception {
+        return ResponseEntity.ok(
+            new ResponseDTO<>(
+                beekeeperService.updateStatus(
                     beekeeperId,
                     request
                 )
