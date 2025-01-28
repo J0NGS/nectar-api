@@ -244,6 +244,13 @@ public class JobService {
             if (!jobsForDay.isEmpty()) {
                 var qtd = jobsForDay.size();
 
+                var mediaRecived = jobsForDay.stream()
+                        .map(Job::getWeight)
+                        .filter(Objects::nonNull)
+                        .mapToInt(Integer::intValue)
+                        .average()
+                        .orElse(0);
+
                 var mediaWaste = jobsForDay.stream()
                         .map(Job::getWasteRate)
                         .filter(Objects::nonNull)
@@ -259,18 +266,24 @@ public class JobService {
                         .orElse(0);
 
                 data.add(
-                        new MonthlyGraphData(
-                                start,
-                                (long) qtd,
-                                (long) mediaWaste,
-                                (long) mediaRevenue));
+                    new MonthlyGraphData(
+                        start,
+                        (long) qtd,
+                        (long) mediaWaste,
+                        (long) mediaRevenue,
+                        (long) mediaRecived
+                    )
+                );
             } else {
                 data.add(
-                        new MonthlyGraphData(
-                                start,
-                                0L,
-                                0L,
-                                0L));
+                    new MonthlyGraphData(
+                        start,
+                        0L,
+                        0L,
+                        0L,
+                        0L
+                    )
+                );
             }
 
             start = start.plusDays(1);
