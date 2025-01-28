@@ -162,4 +162,21 @@ public class ManagerService {
             UserStatus.ACTIVE
         );
     }
+
+    public Manager disableManager (
+        UUID managerId,
+        UserStatus status
+    ) {
+        Manager manager = managerRepository.findById(managerId).orElseThrow(() ->
+            new ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                "Gestor não encontrado!"
+            )
+        );
+
+        User userManager = manager.getUser();
+        userManager.setStatus(status);
+
+        return managerRepository.save(manager);
+    }
 }

@@ -56,7 +56,7 @@ public class BeekeeperController {
     public ResponseEntity<?> update (
         @AuthenticationPrincipal CustomUserDetails userAuthentication,
         @PathVariable("beekeeperId") UUID beekeeperId,
-    @RequestBody CreateBeekeeperDTO request
+        @RequestBody CreateBeekeeperDTO request
     ) throws Exception {
         return ResponseEntity.ok(
             new ResponseDTO<>(
