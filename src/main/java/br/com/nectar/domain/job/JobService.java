@@ -313,12 +313,12 @@ public class JobService {
                 org.getId(),
                 List.of(JobsStatus.CONCLUDED, JobsStatus.IN_PROGRESS));
     
-        // Converte para lista para evitar erro de stream fechado
+        // Convertendo stream para lista para poder reutilizar a stream        
         var jobsConcludes = jobsInMonth.stream()
                 .filter(job -> job.getStatus().equals(JobsStatus.CONCLUDED))
-                .toList(); // Criamos uma lista para reutilizar os valores
+                .toList();
     
-        var concludeProcess = jobsConcludes.size(); // Usa size() em vez de count()
+        var concludeProcess = jobsConcludes.size();
     
         var revenue = concludeProcess > 0
                 ? jobsConcludes.stream().mapToInt(Job::getPostProcessingRevenue).sum()
