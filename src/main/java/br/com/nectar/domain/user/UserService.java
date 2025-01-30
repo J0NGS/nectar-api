@@ -18,6 +18,7 @@ import br.com.nectar.infrastructure.services.utils.DocumentValidatorUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
+import java.text.Normalizer;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -40,12 +41,29 @@ public class UserService {
     private final AuthService authService;
     private final RoleRepository roleRepository;
 
+    private String normalizeUsername(String username) {
+        if (username == null || username.trim().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Nome de usuário não pode ser nulo!");
+        }
+
+        // Remove acentos de toda a string
+        String normalized = Normalizer.normalize(username, Normalizer.Form.NFD)
+                                      .replaceAll("\\p{M}", ""); // Remove acentos
+
+        // Permite apenas caracteres válidos para e-mails (letras, números, @, . e _)
+        normalized = normalized.replaceAll("[^a-zA-Z0-9@._]", "");
+
+        // Converte para minúsculas
+        return normalized.toLowerCase();
+    }
+
     @Transactional
     public String login(String username, String password) {
         try {
-            // Realiza autenticação
+            String normalizedUsername = normalizeUsername(username);
+
             Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(username, password));
+                    new UsernamePasswordAuthenticationToken(normalizedUsername, password));
 
             return jwtGenerator.generateToken(authentication);
         } catch (AuthenticationException e) {
@@ -66,7 +84,7 @@ public class UserService {
         }
         try {
             // Auth service já faz a verificação do username
-            Auth auth = authService.createAuth(user.getAuth().getUsername(), user.getAuth().getPassword()).getBody();
+            Auth auth = authService.createAuth(normalizeUsername(user.getAuth().getUsername()), user.getAuth().getPassword()).getBody();
             user.setAuth(auth);
         } catch (ResponseStatusException e) {
             throw new ResponseStatusException(

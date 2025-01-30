@@ -27,7 +27,7 @@ public class Profile {
     private String phone;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthDate;
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "address_id", referencedColumnName = "id")
     private Address address;
 
