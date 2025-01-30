@@ -299,38 +299,49 @@ public class JobService {
         return graphData;
     }
 
-    public MonthlyBoardDTO getMonthlyBoard(
-            User user,
-            LocalDate month) {
+    public MonthlyBoardDTO getMonthlyBoard(User user, LocalDate month) {
         var board = new MonthlyBoardDTO();
-
+    
         var org = userService.getUserOrg(user.getId());
-
+    
         var init = month.with(TemporalAdjusters.firstDayOfMonth());
         var end = month.with(TemporalAdjusters.lastDayOfMonth()).plusDays(1);
-
+    
         var jobsInMonth = jobRepository.getAllByStatus(
                 init.atStartOfDay(),
                 end.atTime(23, 59, 59),
                 org.getId(),
                 List.of(JobsStatus.CONCLUDED, JobsStatus.IN_PROGRESS));
-
-        var JobsConcludes = jobsInMonth.stream().filter(job -> job.getStatus().equals(JobsStatus.CONCLUDED));
-        var concludeProccess = JobsConcludes.count();
-        var weight = jobsInMonth.size() > 0 ? jobsInMonth.stream().mapToInt(Job::getWeight).sum() : 0;
-        var revenue = concludeProccess > 0 ? JobsConcludes.mapToInt(Job::getPostProcessingRevenue).sum() : 0;
-        var waste =  concludeProccess > 0 ? JobsConcludes.mapToInt(Job::getWaste).sum() : 0;
-        var inProgress = jobsInMonth.stream().filter(job -> job.getStatus().equals(JobsStatus.IN_PROGRESS)).count();
-
+    
+        // Converte para lista para evitar erro de stream fechado
+        var jobsConcludes = jobsInMonth.stream()
+                .filter(job -> job.getStatus().equals(JobsStatus.CONCLUDED))
+                .toList(); // Criamos uma lista para reutilizar os valores
+    
+        var concludeProcess = jobsConcludes.size(); // Usa size() em vez de count()
+    
+        var revenue = concludeProcess > 0
+                ? jobsConcludes.stream().mapToInt(Job::getPostProcessingRevenue).sum()
+                : 0;
+    
+        var waste = concludeProcess > 0
+                ? jobsConcludes.stream().mapToInt(Job::getWaste).sum()
+                : 0;
+    
+        var inProgress = jobsInMonth.stream()
+                .filter(job -> job.getStatus().equals(JobsStatus.IN_PROGRESS))
+                .count();
+    
         var newBeekeepers = beekeeperService.getQtdNewInMonth(org, month);
-
+    
         board.setRevenue((long) revenue);
         board.setWaste((long) waste);
-        board.setConcludeServices(concludeProccess);
+        board.setConcludeServices((long) concludeProcess);
         board.setInProcessingServices(inProgress);
         board.setNewBeekeepers(newBeekeepers);
-        board.setWeight((long) weight);
-
+        board.setWeight((long) jobsInMonth.stream().mapToInt(Job::getWeight).sum());
+    
         return board;
     }
+    
 }
