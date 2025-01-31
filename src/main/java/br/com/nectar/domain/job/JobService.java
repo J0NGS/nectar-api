@@ -32,6 +32,18 @@ public class JobService {
     private final UserService userService;
     private final BeekeeperService beekeeperService;
 
+    private Integer calculateWasteRate(Integer initialWeight, Integer waste) {
+        if (initialWeight == null || initialWeight <= 0 || waste == null || waste <= 0) {
+            return 0; // Retorna 0 caso algum valor seja inválido
+        }
+        
+        
+        
+        Integer wasteRate = ((waste / initialWeight) * 100);
+        
+        return Math.round(wasteRate);
+    }
+
     public Job create(
             CreateJobDTO createJobDTO,
             User user) {
@@ -53,34 +65,28 @@ public class JobService {
 
         job.setPesticides(createJobDTO.getPesticides());
         job.setHiveLoss(createJobDTO.getHiveLoss());
-
         job.setQuantityOfBales(createJobDTO.getQuantityOfBales());
-        job.setWeight(createJobDTO.getWeight());
         job.setProductType(createJobDTO.getProductType());
         job.setStatus(createJobDTO.getStatus());
         job.setObservation(createJobDTO.getObservation());
 
+        if (createJobDTO.getWeight() == null || createJobDTO.getWeight() <= 0) {
+            throw new FrontDisplayableException(
+                    HttpStatus.BAD_REQUEST,
+                    "O peso do serviço deve ser maior que 0!");
+            
+        }
+        job.setWeight((createJobDTO.getWeight()));
+
         if (createJobDTO.getPostProcessing() != null) {
             var postProcessing = createJobDTO.getPostProcessing();
 
-            job.setWaste(postProcessing.getWaste());
+            job.setWaste((postProcessing.getWaste()));
             job.setPostProcessingBales(postProcessing.getPostProcessingBales());
-            job.setPostProcessingRevenue(postProcessing.getPostProcessingRevenue());
-            job.setPostProcessingWeight(postProcessing.getPostProcessingWeight());
+            job.setPostProcessingRevenue((postProcessing.getPostProcessingRevenue()));
+            job.setPostProcessingWeight((postProcessing.getPostProcessingWeight()));
 
-            // Calculando a taxa de desperdício
-            if (createJobDTO.getWeight() != null && postProcessing.getWaste() != null) {
-                Integer initialWeight = createJobDTO.getWeight();
-                Integer waste = postProcessing.getWaste();
-
-                if (initialWeight > 0) {
-                    // Multiplica por 10.000 para preservar precisão antes de dividir
-                    Integer wasteRate = waste * 10000 / initialWeight;
-                    job.setWasteRate(wasteRate); // Armazena como valor inteiro (multiplicado por 100)
-                } else {
-                    job.setWasteRate(0); // Define 0 caso o peso inicial seja inválido
-                }
-            }
+            job.setWasteRate(calculateWasteRate(createJobDTO.getWeight(), postProcessing.getWaste()));
 
             job.setStatus(JobsStatus.CONCLUDED);
         }
@@ -105,7 +111,13 @@ public class JobService {
         job.setHiveLoss(createJobDTO.getHiveLoss());
 
         job.setQuantityOfBales(createJobDTO.getQuantityOfBales());
-        job.setWeight(createJobDTO.getWeight());
+        if (createJobDTO.getWeight() == null || createJobDTO.getWeight() <= 0) {
+            throw new FrontDisplayableException(
+                    HttpStatus.BAD_REQUEST,
+                    "O peso do serviço deve ser maior que 0!");
+            
+        }
+        job.setWeight((createJobDTO.getWeight()));
         job.setProductType(createJobDTO.getProductType());
         job.setStatus(createJobDTO.getStatus());
         job.setObservation(createJobDTO.getObservation());
@@ -113,24 +125,11 @@ public class JobService {
         if (createJobDTO.getPostProcessing() != null) {
             var postProcessing = createJobDTO.getPostProcessing();
 
-            job.setWaste(postProcessing.getWaste());
+            job.setWaste((postProcessing.getWaste()));
             job.setPostProcessingBales(postProcessing.getPostProcessingBales());
-            job.setPostProcessingRevenue(postProcessing.getPostProcessingRevenue());
-            job.setPostProcessingWeight(postProcessing.getPostProcessingWeight());
-
-            // Calculando a taxa de desperdício
-            if (createJobDTO.getWeight() != null && postProcessing.getWaste() != null) {
-                Integer initialWeight = createJobDTO.getWeight();
-                Integer waste = postProcessing.getWaste();
-
-                if (initialWeight > 0) {
-                    // Multiplica por 10.000 para preservar precisão antes de dividir
-                    Integer wasteRate = waste * 10000 / initialWeight;
-                    job.setWasteRate(wasteRate); // Armazena como valor inteiro (multiplicado por 100)
-                } else {
-                    job.setWasteRate(0); // Define 0 caso o peso inicial seja inválido
-                }
-            }
+            job.setPostProcessingRevenue((postProcessing.getPostProcessingRevenue()));
+            job.setPostProcessingWeight((postProcessing.getPostProcessingWeight())  );
+            job.setWasteRate(calculateWasteRate(createJobDTO.getWeight(), postProcessing.getWaste()));
 
             job.setStatus(JobsStatus.CONCLUDED);
         }
