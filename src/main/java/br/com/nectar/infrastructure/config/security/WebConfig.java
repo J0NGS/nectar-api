@@ -30,7 +30,8 @@ import java.util.List;
 
         // Endereços autorizados cors
         protected static final String[] ALLOWED_ORIGINS = {
-            "http://localhost:3000",
+            "http://localhost:4173",
+            "http://localhost:3000"
         };
 
         private final JwtAuthenticationFilter jwtAuthenticationFilter;
