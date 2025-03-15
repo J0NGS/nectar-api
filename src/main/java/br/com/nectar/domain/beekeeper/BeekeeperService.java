@@ -36,6 +36,8 @@ public class BeekeeperService {
         Beekeeper beekeeper = new Beekeeper();
         Profile profile = new Profile();
 
+        beekeeper.setHasHiveLoss(createBeekeeper.getHasHiveLoss());
+        beekeeper.setHasPesticides(createBeekeeper.getHasPesticides());
         beekeeper.setEmail(createBeekeeper.getEmail());
         beekeeper.setOwner(user);
         beekeeper.setOrg(org);
@@ -70,6 +72,8 @@ public class BeekeeperService {
         Beekeeper beekeeper = getById(beekeeperid);
         Profile profile = beekeeper.getProfile();
 
+        beekeeper.setHasHiveLoss(createBeekeeper.getHasHiveLoss());
+        beekeeper.setHasPesticides(createBeekeeper.getHasPesticides());
         beekeeper.setStatus(createBeekeeper.getStatus());
         beekeeper.setEmail(createBeekeeper.getEmail());
         

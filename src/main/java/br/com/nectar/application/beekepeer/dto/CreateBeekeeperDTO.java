@@ -11,6 +11,8 @@ public class CreateBeekeeperDTO {
     private String email;
     private String document;
     private String phone;
+    private Boolean hasPesticides;
+    private Boolean hasHiveLoss;
     private LocalDate birthDate;
     private AddressDTO address = null;
 }
