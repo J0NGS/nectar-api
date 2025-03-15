@@ -248,7 +248,7 @@ public class WorkService {
                         .orElse(0);
 
                 var mediaWaste = jobsForDay.stream()
-                        .map(Work::getResidueRate)
+                        .map(Work::getPostProcessingResidue)
                         .filter(Objects::nonNull)
                         .mapToInt(Long::intValue)
                         .average()
