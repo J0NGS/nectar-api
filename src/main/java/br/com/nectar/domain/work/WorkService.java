@@ -32,13 +32,12 @@ public class WorkService {
     private final UserService userService;
     private final BeekeeperService beekeeperService;
 
-    private Integer calculateResidueRate(Integer initialWeight, Integer waste) {
-        if (initialWeight == null || initialWeight <= 0 || waste == null || waste <= 0) {
-            return 0; // Retorna 0 caso algum valor seja inválido
-        }
+    private Long calculateResidueRate(Long initialWeight, Long waste) {
+        if (initialWeight == null || initialWeight <= 0 || waste == null || waste <= 0)
+            return 0L; // Retorna 0 caso algum valor seja inválido
 
-        Integer wasteRate = ((waste / initialWeight) * 100);
-        return Math.round(wasteRate);
+        var wasteRate = ((waste / initialWeight) * 100);
+        return wasteRate;
     }
 
     public Work create(
@@ -244,21 +243,21 @@ public class WorkService {
                 var mediaRecived = jobsForDay.stream()
                         .map(Work::getWeight)
                         .filter(Objects::nonNull)
-                        .mapToInt(Integer::intValue)
+                        .mapToInt(Long::intValue)
                         .average()
                         .orElse(0);
 
                 var mediaWaste = jobsForDay.stream()
                         .map(Work::getResidueRate)
                         .filter(Objects::nonNull)
-                        .mapToInt(Integer::intValue)
+                        .mapToInt(Long::intValue)
                         .average()
                         .orElse(0);
 
                 var mediaRevenue = jobsForDay.stream()
                         .map(Work::getPostProcessingRevenue)
                         .filter(Objects::nonNull)
-                        .mapToInt(Integer::intValue)
+                        .mapToInt(Long::intValue)
                         .average()
                         .orElse(0);
 
@@ -314,11 +313,11 @@ public class WorkService {
         var concludeProcess = jobsConcludes.size();
     
         var revenue = concludeProcess > 0
-                ? jobsConcludes.stream().mapToInt(Work::getPostProcessingRevenue).sum()
+                ? jobsConcludes.stream().mapToLong(Work::getPostProcessingRevenue).sum()
                 : 0;
     
         var waste = concludeProcess > 0
-                ? jobsConcludes.stream().mapToInt(Work::getPostProcessingResidue).sum()
+                ? jobsConcludes.stream().mapToLong(Work::getPostProcessingResidue).sum()
                 : 0;
     
         var inProgress = jobsInMonth.stream()
@@ -327,12 +326,12 @@ public class WorkService {
     
         var newBeekeepers = beekeeperService.getQtdNewInMonth(org, month);
     
-        board.setRevenue((long) revenue);
-        board.setWaste((long) waste);
+        board.setRevenue( revenue);
+        board.setWaste(waste);
         board.setConcludeServices((long) concludeProcess);
         board.setInProcessingServices(inProgress);
         board.setNewBeekeepers(newBeekeepers);
-        board.setWeight((long) jobsInMonth.stream().mapToInt(Work::getWeight).sum());
+        board.setWeight(jobsInMonth.stream().mapToLong(Work::getWeight).sum());
     
         return board;
     }

@@ -24,13 +24,13 @@ public class Work {
     private String appearance;
     private String scent;
     private String color;
-    private Integer weight;
+    private Long weight;
 
-    private Integer postProcessingWeight;
-    private Integer postProcessingRevenue;
-    private Integer postProcessingDelivered;
-    private Integer postProcessingResidue;
-    private Integer residueRate;
+    private Long postProcessingWeight;
+    private Long postProcessingRevenue;
+    private Long postProcessingDelivered;
+    private Long postProcessingResidue;
+    private Long residueRate;
 
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate startAt;

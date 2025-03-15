@@ -4,8 +4,8 @@ import lombok.Data;
 
 @Data
 public class PostProcessingDTO {
-    private Integer postProcessingWeight;
-    private Integer postProcessingRevenue;
-    private Integer postProcessingDelivered;
-    private Integer postProcessingResidue;
+    private Long postProcessingWeight;
+    private Long postProcessingRevenue;
+    private Long postProcessingDelivered;
+    private Long postProcessingResidue;
 }

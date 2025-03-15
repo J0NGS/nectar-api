@@ -16,7 +16,7 @@ public class CreateWorkDTO {
     private String appearance;
     private String scent;
     private String color;
-    private Integer weight;
+    private Long weight;
     private UUID beekeeperId;
     private LocalDate startAt;
 
