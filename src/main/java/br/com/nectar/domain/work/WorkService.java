@@ -1,11 +1,11 @@
-package br.com.nectar.domain.job;
+package br.com.nectar.domain.work;
 
 import br.com.nectar.application.dashboard.dto.GetDashJobPageDTO;
 import br.com.nectar.application.dashboard.dto.MonthlyBoardDTO;
 import br.com.nectar.application.dashboard.dto.MonthlyGraphDTO;
 import br.com.nectar.application.dashboard.dto.MonthlyGraphData;
-import br.com.nectar.application.job.dto.CreateJobDTO;
-import br.com.nectar.application.job.dto.GetJobPageDTO;
+import br.com.nectar.application.work.dto.CreateWorkDTO;
+import br.com.nectar.application.work.dto.GetWorkPageDTO;
 import br.com.nectar.domain.beekeeper.Beekeeper;
 import br.com.nectar.domain.beekeeper.BeekeeperService;
 import br.com.nectar.domain.user.User;
@@ -27,134 +27,128 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class JobService {
-    private final JobRepository jobRepository;
+public class WorkService {
+    private final WorkRepository jobRepository;
     private final UserService userService;
     private final BeekeeperService beekeeperService;
 
-    private Integer calculateWasteRate(Integer initialWeight, Integer waste) {
+    private Integer calculateResidueRate(Integer initialWeight, Integer waste) {
         if (initialWeight == null || initialWeight <= 0 || waste == null || waste <= 0) {
             return 0; // Retorna 0 caso algum valor seja inválido
         }
-        
-        
-        
+
         Integer wasteRate = ((waste / initialWeight) * 100);
-        
         return Math.round(wasteRate);
     }
 
-    public Job create(
-            CreateJobDTO createJobDTO,
-            User user) {
+    public Work create(
+        CreateWorkDTO createWorkDTO,
+        User user
+    ) {
         User org = userService.getUserOrg(user.getId());
-        Beekeeper beekeeper = beekeeperService.getById(createJobDTO.getBeekeeperId());
+        Beekeeper beekeeper = beekeeperService.getById(createWorkDTO.getBeekeeperId());
 
-        var job = new Job();
+        var job = new Work();
 
         job.setOwner(user);
         job.setOrg(org);
 
         job.setBeekeeper(beekeeper);
 
-        job.setOrigin(createJobDTO.getOrigin());
-        job.setAppearance(createJobDTO.getAppearance());
-        job.setScent(createJobDTO.getScent());
-        job.setColor(createJobDTO.getColor());
-        job.setStartAt(createJobDTO.getStartAt());
+        job.setOrigin(createWorkDTO.getOrigin());
+        job.setAppearance(createWorkDTO.getAppearance());
+        job.setScent(createWorkDTO.getScent());
+        job.setColor(createWorkDTO.getColor());
+        job.setStartAt(createWorkDTO.getStartAt());
+        job.setProductType(createWorkDTO.getProductType());
+        job.setStatus(createWorkDTO.getStatus());
+        job.setObservation(createWorkDTO.getObservation());
 
-        job.setPesticides(createJobDTO.getPesticides());
-        job.setHiveLoss(createJobDTO.getHiveLoss());
-        job.setQuantityOfBales(createJobDTO.getQuantityOfBales());
-        job.setProductType(createJobDTO.getProductType());
-        job.setStatus(createJobDTO.getStatus());
-        job.setObservation(createJobDTO.getObservation());
-
-        if (createJobDTO.getWeight() == null || createJobDTO.getWeight() <= 0) {
+        if (createWorkDTO.getWeight() == null || createWorkDTO.getWeight() <= 0) {
             throw new FrontDisplayableException(
                     HttpStatus.BAD_REQUEST,
                     "O peso do serviço deve ser maior que 0!");
             
         }
-        job.setWeight((createJobDTO.getWeight()));
+        job.setWeight((createWorkDTO.getWeight()));
 
-        if (createJobDTO.getPostProcessing() != null) {
-            var postProcessing = createJobDTO.getPostProcessing();
+        if (createWorkDTO.getPostProcessing() != null) {
+            var postProcessing = createWorkDTO.getPostProcessing();
 
-            job.setWaste((postProcessing.getWaste()));
-            job.setPostProcessingBales(postProcessing.getPostProcessingBales());
+            job.setPostProcessingResidue((postProcessing.getPostProcessingResidue()));
+            job.setPostProcessingDelivered(postProcessing.getPostProcessingDelivered());
             job.setPostProcessingRevenue((postProcessing.getPostProcessingRevenue()));
             job.setPostProcessingWeight((postProcessing.getPostProcessingWeight()));
 
-            job.setWasteRate(calculateWasteRate(createJobDTO.getWeight(), postProcessing.getWaste()));
+            job.setResidueRate(
+                calculateResidueRate(createWorkDTO.getWeight(), postProcessing.getPostProcessingResidue())
+            );
 
-            job.setStatus(JobsStatus.CONCLUDED);
+            job.setStatus(WorkStatus.CONCLUDED);
         }
 
         return jobRepository.save(job);
     }
 
-    public Job update(
-            UUID jobId,
-            CreateJobDTO createJobDTO) {
+    public Work update(
+        UUID jobId,
+        CreateWorkDTO createWorkDTO
+    ) {
+        if (createWorkDTO.getWeight() == null || createWorkDTO.getWeight() <= 0) {
+            throw new FrontDisplayableException(
+                HttpStatus.BAD_REQUEST,
+                "O peso do serviço deve ser maior que 0!");
+
+        }
+
         var job = getById(jobId);
 
-        job.setStatus(createJobDTO.getStatus());
+        job.setStatus(createWorkDTO.getStatus());
+        job.setOrigin(createWorkDTO.getOrigin());
+        job.setAppearance(createWorkDTO.getAppearance());
+        job.setScent(createWorkDTO.getScent());
+        job.setColor(createWorkDTO.getColor());
+        job.setStartAt(createWorkDTO.getStartAt());
+        job.setWeight((createWorkDTO.getWeight()));
+        job.setProductType(createWorkDTO.getProductType());
+        job.setStatus(createWorkDTO.getStatus());
+        job.setObservation(createWorkDTO.getObservation());
 
-        job.setOrigin(createJobDTO.getOrigin());
-        job.setAppearance(createJobDTO.getAppearance());
-        job.setScent(createJobDTO.getScent());
-        job.setColor(createJobDTO.getColor());
-        job.setStartAt(createJobDTO.getStartAt());
+        if (createWorkDTO.getPostProcessing() != null) {
+            var postProcessing = createWorkDTO.getPostProcessing();
 
-        job.setPesticides(createJobDTO.getPesticides());
-        job.setHiveLoss(createJobDTO.getHiveLoss());
-
-        job.setQuantityOfBales(createJobDTO.getQuantityOfBales());
-        if (createJobDTO.getWeight() == null || createJobDTO.getWeight() <= 0) {
-            throw new FrontDisplayableException(
-                    HttpStatus.BAD_REQUEST,
-                    "O peso do serviço deve ser maior que 0!");
-            
-        }
-        job.setWeight((createJobDTO.getWeight()));
-        job.setProductType(createJobDTO.getProductType());
-        job.setStatus(createJobDTO.getStatus());
-        job.setObservation(createJobDTO.getObservation());
-
-        if (createJobDTO.getPostProcessing() != null) {
-            var postProcessing = createJobDTO.getPostProcessing();
-
-            job.setWaste((postProcessing.getWaste()));
-            job.setPostProcessingBales(postProcessing.getPostProcessingBales());
+            job.setPostProcessingResidue((postProcessing.getPostProcessingResidue()));
+            job.setPostProcessingDelivered(postProcessing.getPostProcessingDelivered());
             job.setPostProcessingRevenue((postProcessing.getPostProcessingRevenue()));
-            job.setPostProcessingWeight((postProcessing.getPostProcessingWeight())  );
-            job.setWasteRate(calculateWasteRate(createJobDTO.getWeight(), postProcessing.getWaste()));
+            job.setPostProcessingWeight((postProcessing.getPostProcessingWeight()));
 
-            job.setStatus(JobsStatus.CONCLUDED);
+            job.setResidueRate(
+                calculateResidueRate(createWorkDTO.getWeight(), postProcessing.getPostProcessingResidue())
+            );
+            job.setStatus(WorkStatus.CONCLUDED);
         }
 
         return jobRepository.save(job);
     }
 
-    public Job getById(UUID id) {
+    public Work getById(UUID id) {
         return jobRepository.findById(id)
                 .orElseThrow(() -> new FrontDisplayableException(
                         HttpStatus.BAD_REQUEST,
                         "Não foi possível encontrar o serviço Informado!"));
     }
 
-    public Page<Job> getPage(
+    public Page<Work> getPage(
             User user,
             Integer page,
-            GetJobPageDTO getPageDTO) {
+            GetWorkPageDTO getPageDTO) {
         User org = userService.getUserOrg(user.getId());
 
-        List<JobsStatus> status = switch (getPageDTO.getStatus()) {
-            case IN_PROGRESS -> List.of(JobsStatus.IN_PROGRESS);
-            case CANCELED -> List.of(JobsStatus.CANCELED);
-            case CONCLUDED -> List.of(JobsStatus.CONCLUDED);
-            default -> List.of(JobsStatus.values());
+        List<WorkStatus> status = switch (getPageDTO.getStatus()) {
+            case IN_PROGRESS -> List.of(WorkStatus.IN_PROGRESS);
+            case CANCELED -> List.of(WorkStatus.CANCELED);
+            case CONCLUDED -> List.of(WorkStatus.CONCLUDED);
+            default -> List.of(WorkStatus.values());
         };
 
         return jobRepository.getPageByStatus(
@@ -165,17 +159,17 @@ public class JobService {
                         getPageDTO.getPageSize() > 0 ? getPageDTO.getPageSize() : 10));
     }
 
-    public Page<Job> getPageForDash(
+    public Page<Work> getPageForDash(
             User user,
             Integer page,
             GetDashJobPageDTO getPageDTO) {
         User org = userService.getUserOrg(user.getId());
 
-        List<JobsStatus> status = switch (getPageDTO.getStatus()) {
-            case IN_PROGRESS -> List.of(JobsStatus.IN_PROGRESS);
-            case CANCELED -> List.of(JobsStatus.CANCELED);
-            case CONCLUDED -> List.of(JobsStatus.CONCLUDED);
-            default -> List.of(JobsStatus.values());
+        List<WorkStatus> status = switch (getPageDTO.getStatus()) {
+            case IN_PROGRESS -> List.of(WorkStatus.IN_PROGRESS);
+            case CANCELED -> List.of(WorkStatus.CANCELED);
+            case CONCLUDED -> List.of(WorkStatus.CONCLUDED);
+            default -> List.of(WorkStatus.values());
         };
 
         var init = getPageDTO.getMonth().with(TemporalAdjusters.firstDayOfMonth()).atStartOfDay();
@@ -194,19 +188,19 @@ public class JobService {
         );
     }
 
-    public Page<Job> getPageByBeekeeperId(
+    public Page<Work> getPageByBeekeeperId(
             UUID beekeeperId,
             User user,
             Integer page,
-            GetJobPageDTO getPageDTO) {
+            GetWorkPageDTO getPageDTO) {
         Beekeeper beekeeper = beekeeperService.getById(beekeeperId);
         User org = userService.getUserOrg(user.getId());
 
-        List<JobsStatus> status = switch (getPageDTO.getStatus()) {
-            case IN_PROGRESS -> List.of(JobsStatus.IN_PROGRESS);
-            case CANCELED -> List.of(JobsStatus.CANCELED);
-            case CONCLUDED -> List.of(JobsStatus.CONCLUDED);
-            default -> List.of(JobsStatus.values());
+        List<WorkStatus> status = switch (getPageDTO.getStatus()) {
+            case IN_PROGRESS -> List.of(WorkStatus.IN_PROGRESS);
+            case CANCELED -> List.of(WorkStatus.CANCELED);
+            case CONCLUDED -> List.of(WorkStatus.CONCLUDED);
+            default -> List.of(WorkStatus.values());
         };
 
         return jobRepository.getPageByStatusAndBeekeeper(
@@ -232,7 +226,7 @@ public class JobService {
                 init.atStartOfDay(),
                 end.atTime(23, 59, 59),
                 org.getId(),
-                List.of(JobsStatus.CONCLUDED, JobsStatus.IN_PROGRESS));
+                List.of(WorkStatus.CONCLUDED, WorkStatus.IN_PROGRESS));
 
         var start = month.with(TemporalAdjusters.firstDayOfMonth());
         var data = new ArrayList<MonthlyGraphData>();
@@ -241,28 +235,28 @@ public class JobService {
             LocalDate finalStart = start;
 
             var jobsForDay = jobsInMonth.stream()
-                    .filter(job -> job.getCreatedAt().toLocalDate().isEqual(finalStart))
+                    .filter(work -> work.getCreatedAt().toLocalDate().isEqual(finalStart))
                     .toList();
 
             if (!jobsForDay.isEmpty()) {
                 var qtd = jobsForDay.size();
 
                 var mediaRecived = jobsForDay.stream()
-                        .map(Job::getWeight)
+                        .map(Work::getWeight)
                         .filter(Objects::nonNull)
                         .mapToInt(Integer::intValue)
                         .average()
                         .orElse(0);
 
                 var mediaWaste = jobsForDay.stream()
-                        .map(Job::getWasteRate)
+                        .map(Work::getResidueRate)
                         .filter(Objects::nonNull)
                         .mapToInt(Integer::intValue)
                         .average()
                         .orElse(0);
 
                 var mediaRevenue = jobsForDay.stream()
-                        .map(Job::getPostProcessingRevenue)
+                        .map(Work::getPostProcessingRevenue)
                         .filter(Objects::nonNull)
                         .mapToInt(Integer::intValue)
                         .average()
@@ -310,25 +304,25 @@ public class JobService {
                 init.atStartOfDay(),
                 end.atTime(23, 59, 59),
                 org.getId(),
-                List.of(JobsStatus.CONCLUDED, JobsStatus.IN_PROGRESS));
+                List.of(WorkStatus.CONCLUDED, WorkStatus.IN_PROGRESS));
     
         // Convertendo stream para lista para poder reutilizar a stream        
         var jobsConcludes = jobsInMonth.stream()
-                .filter(job -> job.getStatus().equals(JobsStatus.CONCLUDED))
+                .filter(work -> work.getStatus().equals(WorkStatus.CONCLUDED))
                 .toList();
     
         var concludeProcess = jobsConcludes.size();
     
         var revenue = concludeProcess > 0
-                ? jobsConcludes.stream().mapToInt(Job::getPostProcessingRevenue).sum()
+                ? jobsConcludes.stream().mapToInt(Work::getPostProcessingRevenue).sum()
                 : 0;
     
         var waste = concludeProcess > 0
-                ? jobsConcludes.stream().mapToInt(Job::getWaste).sum()
+                ? jobsConcludes.stream().mapToInt(Work::getPostProcessingResidue).sum()
                 : 0;
     
         var inProgress = jobsInMonth.stream()
-                .filter(job -> job.getStatus().equals(JobsStatus.IN_PROGRESS))
+                .filter(work -> work.getStatus().equals(WorkStatus.IN_PROGRESS))
                 .count();
     
         var newBeekeepers = beekeeperService.getQtdNewInMonth(org, month);
@@ -338,7 +332,7 @@ public class JobService {
         board.setConcludeServices((long) concludeProcess);
         board.setInProcessingServices(inProgress);
         board.setNewBeekeepers(newBeekeepers);
-        board.setWeight((long) jobsInMonth.stream().mapToInt(Job::getWeight).sum());
+        board.setWeight((long) jobsInMonth.stream().mapToInt(Work::getWeight).sum());
     
         return board;
     }

@@ -22,6 +22,8 @@ public class Beekeeper {
     @Enumerated(EnumType.STRING)
     private UserStatus status = UserStatus.ACTIVE;
     private String email = null;
+    private Boolean hasPesticides;
+    private Boolean hasHiveLoss;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "profile_id", referencedColumnName = "id")

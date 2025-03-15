@@ -1,6 +1,6 @@
 package br.com.nectar.application.user;
 
-import br.com.nectar.application.ResponseDTO;
+import br.com.nectar.application.commom.ResponseDTO;
 import br.com.nectar.application.manager.dto.CreateManagerDTO;
 import br.com.nectar.application.user.dto.AuthRequestDTO;
 import br.com.nectar.application.user.dto.UserRegistrationRequest;

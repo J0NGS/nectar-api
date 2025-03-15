@@ -51,6 +51,7 @@ CREATE TABLE profiles (
 -- Tabela User
 CREATE TABLE users (
     id UUID PRIMARY KEY NOT NULL,
+    status VARCHAR(50),
     auth_id UUID,
     profile_id UUID,
     role_id UUID,

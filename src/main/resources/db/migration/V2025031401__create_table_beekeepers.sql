@@ -1,7 +1,10 @@
+-- Criar nova tabela beekeepers
 CREATE TABLE IF NOT EXISTS beekeepers (
     id UUID PRIMARY KEY NOT NULL,
     status VARCHAR(50),
     email VARCHAR(255),
+    has_pesticides BOOLEAN,
+    has_hive_loss BOOLEAN,
     profile_id UUID,
     owner_id UUID,
     org_id UUID,

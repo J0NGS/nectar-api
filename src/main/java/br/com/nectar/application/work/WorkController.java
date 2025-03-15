@@ -1,9 +1,9 @@
-package br.com.nectar.application.job;
+package br.com.nectar.application.work;
 
-import br.com.nectar.application.ResponseDTO;
-import br.com.nectar.application.job.dto.CreateJobDTO;
-import br.com.nectar.application.job.dto.GetJobPageDTO;
-import br.com.nectar.domain.job.JobService;
+import br.com.nectar.application.commom.ResponseDTO;
+import br.com.nectar.application.work.dto.CreateWorkDTO;
+import br.com.nectar.application.work.dto.GetWorkPageDTO;
+import br.com.nectar.domain.work.WorkService;
 import br.com.nectar.domain.user.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,17 +15,17 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/nectar/api/jobs")
 @RequiredArgsConstructor
-public class JobController {
-    private final JobService jobService;
+public class WorkController {
+    private final WorkService workService;
 
     @PostMapping
     public ResponseEntity<?> create (
         @AuthenticationPrincipal CustomUserDetails userAuthentication,
-        @RequestBody CreateJobDTO request
+        @RequestBody CreateWorkDTO request
     ) throws Exception {
         return ResponseEntity.ok(
             new ResponseDTO<>(
-                jobService.create(
+                workService.create(
                     request,
                     userAuthentication.getUser()
                 )
@@ -37,11 +37,11 @@ public class JobController {
     public ResponseEntity<?> getPage (
         @AuthenticationPrincipal CustomUserDetails userAuthentication,
         @PathVariable("page") Integer page,
-        @RequestBody GetJobPageDTO request
+        @RequestBody GetWorkPageDTO request
     ) throws Exception {
         return ResponseEntity.ok(
             new ResponseDTO<>(
-                jobService.getPage(
+                workService.getPage(
                     userAuthentication.getUser(),
                     page,
                     request
@@ -55,11 +55,11 @@ public class JobController {
         @AuthenticationPrincipal CustomUserDetails userAuthentication,
         @PathVariable("page") Integer page,
         @PathVariable("beekeeperId") UUID beekeeperId,
-        @RequestBody GetJobPageDTO request
+        @RequestBody GetWorkPageDTO request
     ) throws Exception {
         return ResponseEntity.ok(
             new ResponseDTO<>(
-                jobService.getPageByBeekeeperId(
+                workService.getPageByBeekeeperId(
                     beekeeperId,
                     userAuthentication.getUser(),
                     page,
@@ -73,11 +73,11 @@ public class JobController {
     public ResponseEntity<?> update (
         @AuthenticationPrincipal CustomUserDetails userAuthentication,
         @PathVariable("Id") UUID Id,
-        @RequestBody CreateJobDTO request
+        @RequestBody CreateWorkDTO request
     ) throws Exception {
         return ResponseEntity.ok(
             new ResponseDTO<>(
-                jobService.update(
+                workService.update(
                     Id,
                     request
                 )
@@ -91,7 +91,7 @@ public class JobController {
     ) throws Exception {
         return ResponseEntity.ok(
             new ResponseDTO<>(
-                jobService.getById(jobId)
+                workService.getById(jobId)
             )
         );
     }

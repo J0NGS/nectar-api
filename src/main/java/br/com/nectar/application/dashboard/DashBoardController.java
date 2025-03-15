@@ -1,8 +1,8 @@
 package br.com.nectar.application.dashboard;
 
-import br.com.nectar.application.ResponseDTO;
+import br.com.nectar.application.commom.ResponseDTO;
 import br.com.nectar.application.dashboard.dto.GetDashJobPageDTO;
-import br.com.nectar.domain.job.JobService;
+import br.com.nectar.domain.work.WorkService;
 import br.com.nectar.domain.user.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +15,7 @@ import java.time.LocalDate;
 @RequestMapping("/nectar/api/dashboard")
 @RequiredArgsConstructor
 public class DashBoardController {
-    private final JobService jobService;
+    private final WorkService workService;
 
     @PostMapping("/page/{page}")
     public ResponseEntity<?> getJobsPage (
@@ -25,7 +25,7 @@ public class DashBoardController {
     ) throws Exception {
         return ResponseEntity.ok(
             new ResponseDTO<>(
-                jobService.getPageForDash(
+                workService.getPageForDash(
                     userAuthentication.getUser(),
                     page,
                     request
@@ -41,7 +41,7 @@ public class DashBoardController {
     ) {
         return ResponseEntity.ok(
             new ResponseDTO<>(
-                jobService.getMonthlyGraph(
+                workService.getMonthlyGraph(
                     userAuthentication.getUser(),
                         LocalDate.parse(month)
                 )
@@ -56,7 +56,7 @@ public class DashBoardController {
     ) {
         return ResponseEntity.ok(
             new ResponseDTO<>(
-                jobService.getMonthlyBoard(
+                workService.getMonthlyBoard(
                     userAuthentication.getUser(),
                     LocalDate.parse(month)
                 )

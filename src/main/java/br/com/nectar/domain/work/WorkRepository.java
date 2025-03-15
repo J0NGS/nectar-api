@@ -1,4 +1,4 @@
-package br.com.nectar.domain.job;
+package br.com.nectar.domain.work;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,78 +13,78 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface JobRepository extends JpaRepository<Job, UUID> {
+public interface WorkRepository extends JpaRepository<Work, UUID> {
     @Query("""
-        SELECT j FROM Job j
-        WHERE j.beekeeper.id = :beekeeperId
+        SELECT w FROM Work w
+        WHERE w.beekeeper.id = :beekeeperId
     """)
-    Page<Job> findByBeekeeperName(@Param("beekeeperName") String beekeeperId, Pageable pageable);
+    Page<Work> findByBeekeeperName(@Param("beekeeperName") String beekeeperId, Pageable pageable);
     
 
     @Query("""
-        SELECT j FROM Job j
-        WHERE j.owner.id = :ownerId
+        SELECT w FROM Work w
+        WHERE w.owner.id = :ownerId
     """)
-    Page<Job> findByOwnerId(@Param("ownerId") UUID ownerId, Pageable pageable);
+    Page<Work> findByOwnerId(@Param("ownerId") UUID ownerId, Pageable pageable);
     
 
     @Query("""
-        SELECT j FROM Job j
-        WHERE j.org.id = :orgId
+        SELECT w FROM Work w
+        WHERE w.org.id = :orgId
     """)
-    Page<Job> findByOrgId(@Param("orgId") UUID orgId, Pageable pageable);
+    Page<Work> findByOrgId(@Param("orgId") UUID orgId, Pageable pageable);
     
 
     @Query("""
-        SELECT j FROM Job j
+        SELECT j FROM Work j
         WHERE j.id = :jobId
     """)
-    Optional<Job> findById(@Param("jobId") UUID jobId);
+    Optional<Work> findById(@Param("jobId") UUID jobId);
 
-    @Query("SELECT j FROM Job j where j.org.id = :userOrgId AND j.status IN :statuslist")
-    Page<Job> getPageByStatus(
+    @Query("SELECT j FROM Work j where j.org.id = :userOrgId AND j.status IN :statuslist")
+    Page<Work> getPageByStatus(
         @Param("userOrgId") UUID userOrgId,
-        @Param("statuslist") List<JobsStatus> status,
+        @Param("statuslist") List<WorkStatus> status,
         Pageable pageable
     );
 
     @Query("""
-        SELECT j FROM Job j
+        SELECT j FROM Work j
         where j.org.id = :userOrgId
         AND j.status IN :statuslist
         AND j.createdAt >= :begin AND j.createdAt <= :end
     """)
-    List<Job> getAllByStatus(
+    List<Work> getAllByStatus(
         @Param("begin") LocalDateTime begin,
         @Param("end") LocalDateTime end,
         @Param("userOrgId") UUID userOrgId,
-        @Param("statuslist") List<JobsStatus> status
+        @Param("statuslist") List<WorkStatus> status
     );
 
     @Query("""
-        SELECT j FROM Job j
+        SELECT j FROM Work j
         where j.org.id = :userOrgId
         AND j.status IN :statuslist
         AND j.createdAt >= :begin AND j.createdAt <= :end
     """)
-    Page<Job> getPageByStatusAndDate(
+    Page<Work> getPageByStatusAndDate(
         @Param("begin") LocalDateTime begin,
         @Param("end") LocalDateTime end,
         @Param("userOrgId") UUID userOrgId,
-        @Param("statuslist") List<JobsStatus> status,
+        @Param("statuslist") List<WorkStatus> status,
         Pageable pageable
     );
 
     @Query("""
-        SELECT j FROM Job j
+        SELECT j FROM Work j
         WHERE j.org.id = :userOrgId
         AND j.beekeeper.id = :beekeeperId
         AND j.status IN :statuslist
     """)
-    Page<Job> getPageByStatusAndBeekeeper(
+    Page<Work> getPageByStatusAndBeekeeper(
         @Param("userOrgId") UUID userOrgId,
         @Param("beekeeperId") UUID beekeeperId,
-        @Param("statuslist") List<JobsStatus> status,
+        @Param("statuslist") List<WorkStatus> status,
         Pageable pageable
     );
 }

@@ -1,13 +1,13 @@
-package br.com.nectar.domain.job;
+package br.com.nectar.domain.work;
 
-public enum JobsStatus {
+public enum WorkStatus {
     CONCLUDED("Concluído"),
     IN_PROGRESS("Em andamento"),
     CANCELED("Cancelado");
 
     private final String description;
 
-    JobsStatus(String description) {
+    WorkStatus(String description) {
         this.description = description;
     }
 

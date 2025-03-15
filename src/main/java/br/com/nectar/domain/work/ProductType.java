@@ -1,4 +1,4 @@
-package br.com.nectar.domain.job;
+package br.com.nectar.domain.work;
 
 public enum ProductType {
     HONEY("Mel"),

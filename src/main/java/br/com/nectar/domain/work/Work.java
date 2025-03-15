@@ -1,4 +1,4 @@
-package br.com.nectar.domain.job;
+package br.com.nectar.domain.work;
 
 import br.com.nectar.domain.beekeeper.Beekeeper;
 import br.com.nectar.domain.user.User;
@@ -12,34 +12,28 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-
 @Entity
-@Table(name = "jobs")
+@Table(name = "works")
 @Setter
 @Getter
-public class Job {
+public class Work {
     @Id
     private UUID id = UUID.randomUUID();
 
-    private String origin; // Origem
-    private String appearance; // Aparência
-    private String scent; // Cheiro
-    private String color; // Cor
+    private String origin;
+    private String appearance;
+    private String scent;
+    private String color;
+    private Integer weight;
 
-    private Boolean pesticides; // Pesticidas
-    private Boolean hiveLoss; // Perda de enxame
-
-    private Integer quantityOfBales; // Quantidade de fardos
-    private Integer weight; // Peso total
-
-    private Integer postProcessingBales; // Quantidade de fardos pós-processamento
-    private Integer postProcessingWeight; // Peso total pós-processamento
-    private Integer postProcessingRevenue; // Arrecadado
-    private Integer waste; // Peso desperdiçado
-    private Integer wasteRate; // Taxa de desperdício
+    private Integer postProcessingWeight;
+    private Integer postProcessingRevenue;
+    private Integer postProcessingDelivered;
+    private Integer postProcessingResidue;
+    private Integer residueRate;
 
     @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDate startAt; // Início
+    private LocalDate startAt;
 
     private String observation;
 
@@ -47,7 +41,7 @@ public class Job {
     private ProductType productType = ProductType.WAX;
 
     @Enumerated(EnumType.STRING)
-    private JobsStatus status = JobsStatus.IN_PROGRESS;
+    private WorkStatus status = WorkStatus.IN_PROGRESS;
 
     @OneToOne
     @JoinColumn(name = "beekeeper_id", referencedColumnName = "id")

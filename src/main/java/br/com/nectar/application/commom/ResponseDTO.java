@@ -1,4 +1,4 @@
-package br.com.nectar.application;
+package br.com.nectar.application.commom;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;

@@ -1,18 +1,17 @@
--- Tabela Job
-CREATE TABLE IF NOT EXISTS jobs (
+-- Criar nova tabela works
+CREATE TABLE IF NOT EXISTS works (
     id UUID PRIMARY KEY NOT NULL,
     origin VARCHAR(255),
     appearance VARCHAR(255),
     scent VARCHAR(255),
     color VARCHAR(50),
-    pesticides BOOLEAN,
-    hive_loss BOOLEAN,
-    quantity_of_bales INT,
     weight INT,
-    post_processing_bales INT,
     post_processing_weight INT,
     post_processing_revenue INT,
-    waste_rate INT,
+    post_processing_delivered INT,
+    post_processing_residue INT,
+    residue_rate INT,
+    start_at DATE,
     observation TEXT,
     product_type VARCHAR(50),
     status VARCHAR(50),

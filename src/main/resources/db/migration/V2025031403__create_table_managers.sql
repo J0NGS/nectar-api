@@ -1,4 +1,4 @@
--- Tabela Job
+-- Tabela Managers
 CREATE TABLE IF NOT EXISTS managers (
     id UUID PRIMARY KEY NOT NULL,
     user_id UUID,

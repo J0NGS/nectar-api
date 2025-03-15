@@ -1,4 +1,4 @@
-package br.com.nectar.application.adress.dto;
+package br.com.nectar.application.commom;
 
 
 import lombok.AllArgsConstructor;
